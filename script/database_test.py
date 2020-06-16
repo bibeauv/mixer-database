@@ -17,28 +17,35 @@ array_ratioTC = np.linspace(4,5,2)
 array_ratioDW = np.linspace(5,6,2)
 array_ratioDW_Hub = np.linspace(5,6,2)
 
-path = "/home/bibeauv/soft/lethe/database"
+# Create array for the impeller velocity (omega)
+velocity = np.linspace(10,500,2)
 
-i = 1
+path = "/home/bibeauv/soft/lethe/mixer-database/script"
 
-for rTD in array_ratioTD :
-    for rHT in array_ratioHT :
-        for rTC in array_ratioTC :
-            for rDW in array_ratioDW :
+i = 0
+j = 0
+
+for rHT in array_ratioHT :
+    for rTC in array_ratioTC :
+        for rDW in array_ratioDW :
+            i += 1
+            for rTD in array_ratioTD :
+                j += 1
+                array_ratioDW_Hub = [rTD, rTD-0.4*rTD]
                 for rDW_Hub in array_ratioDW_Hub :
-                    if rDW_Hub <= rDW :
+                    for v in velocity :
                         # Open the geometry file
                         fic_geo = open("mixer.geo","r")
                         cte_geo = fic_geo.read()
                         # Insert the geometry
                         template = Template(cte_geo)
                         geometries = template.render(ratioTD = rTD,
-                                                     ratioHT = rHT,
-                                                     ratioTC = rTC,
-                                                     ratioDW = rDW,
-                                                     ratioDW_Hub = rDW_Hub,
-                                                     theta = 0.785398163,
-                                                     p_thick = 0.1)
+                                                        ratioHT = rHT,
+                                                        ratioTC = rTC,
+                                                        ratioDW = rDW,
+                                                        ratioDW_Hub = rDW_Hub,
+                                                        theta = 0.785398163,
+                                                        p_thick = 0.1)
                         fic_geo.close()
 
                         # Open the parameter file
@@ -46,12 +53,20 @@ for rTD in array_ratioTD :
                         cte_prm = fic_prm.read()
                         # Insert the parameters
                         template_prm = Template(cte_prm)
-                        parameters = template_prm.render(omega = 6.283185307)
+                        parameters = template_prm.render(omega = v)
                         fic_prm.close()
 
                         # Create the folder where the simulation will launch
-                        path_number = str(i)
-                        newPath = path + "/mixer_" + path_number
+                        path_geo = str(i)
+                        path_diameter = str(j)
+                        path_velocity = str(v)
+                        
+                        if rDW_Hub == rTD :
+                            path_hub = "without"
+                        else :
+                            path_hub = "with"
+                        
+                        newPath = path + "/mixer_" + path_geo + "_" + path_diameter + "_" + path_hub + "_" + path_velocity
                         os.mkdir(newPath)
                         os.chdir(newPath)
                         # Write the geometry file and the parameter file
@@ -62,11 +77,10 @@ for rTD in array_ratioTD :
                         wr_prm = open("mixer.prm","w")
                         prm_file = wr_prm.write(parameters)
                         wr_prm.close()
-                        
+
                         # Generate the mesh
                         os.system('gmsh -3 mixer.geo')
                         # Launch of Lethe
                         # os.system('../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
 
                         os.chdir("../")
-                        i = i+1
