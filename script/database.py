@@ -10,40 +10,47 @@ import os
 import numpy as np
 
 # Create arrays for every ratios of the mixer's geometry
-array_ratioTD = np.linspace(2,5,10)
-array_ratioHT = np.linspace(1,1.5,10)
-array_ratioTC = np.linspace(2,5,10)
-array_ratioDW = np.linspace(3,6,10)
+array_ratioTD = np.linspace(2,5,2)
+array_ratioHT = np.linspace(1,1.5,2)
+array_ratioTC = np.linspace(2,5,2)
+array_ratioDW = np.linspace(3,6,2)
 
 # Create array for the impeller velocity (omega)
-velocity = np.linspace(10,500,10)
+velocity = np.linspace(10,500,2)
 
 path = "/home/bibeauv/soft/lethe/mixer-database/script"
 
-i = 0
-j = 0
+start = 1
+stop = 2
 
-for rHT in array_ratioHT :
-    for rTC in array_ratioTC :
-        for rDW in array_ratioDW :
-            i += 1
-            for rTD in array_ratioTD :
-                j += 1
+real_stop = (len(array_ratioTD)*
+             len(array_ratioHT)*
+             len(array_ratioTC)*
+             len(array_ratioDW)*
+             len(velocity)     * 2)
+
+number = (start-1)*real_stop/len(array_ratioTD)+1
+stop_number = stop*real_stop/len(array_ratioTD)
+
+for rTD in array_ratioTD[start-1:stop]:
+    for rTC in array_ratioTC:
+        for rDW in array_ratioDW:
+            for rHT in array_ratioHT:
                 array_ratioDW_Hub = [rTD, rTD-0.4*rTD]
-                for rDW_Hub in array_ratioDW_Hub :
-                    for v in velocity :
+                for rDW_Hub in array_ratioDW_Hub:
+                    for v in velocity:
                         # Open the geometry file
                         fic_geo = open("mixer.geo","r")
                         cte_geo = fic_geo.read()
                         # Insert the geometry
                         template = Template(cte_geo)
                         geometries = template.render(ratioTD = rTD,
-                                                        ratioHT = rHT,
-                                                        ratioTC = rTC,
-                                                        ratioDW = rDW,
-                                                        ratioDW_Hub = rDW_Hub,
-                                                        theta = 0.785398163,
-                                                        p_thick = 0.1)
+                                                     ratioHT = rHT,
+                                                     ratioTC = rTC,
+                                                     ratioDW = rDW,
+                                                     ratioDW_Hub = rDW_Hub,
+                                                     theta = 0.785398163,
+                                                     p_thick = 0.1)
                         fic_geo.close()
 
                         # Open the parameter file
@@ -55,16 +62,8 @@ for rHT in array_ratioHT :
                         fic_prm.close()
 
                         # Create the folder where the simulation will launch
-                        path_geo = str(i)
-                        path_diameter = str(j)
-                        path_velocity = str(v)
-                        
-                        if rDW_Hub == rTD :
-                            path_hub = "without"
-                        else :
-                            path_hub = "with"
-                        
-                        newPath = path + "/mixer_" + path_geo + "_" + path_diameter + "_" + path_hub + "_" + path_velocity
+                        path_number = str(int(number))
+                        newPath = path + "/mixer_" + path_number
                         os.mkdir(newPath)
                         os.chdir(newPath)
                         # Write the geometry file and the parameter file
@@ -76,9 +75,9 @@ for rHT in array_ratioHT :
                         prm_file = wr_prm.write(parameters)
                         wr_prm.close()
 
-                        # Generate the mesh
-                        os.system('gmsh -3 mixer.geo')
-                        # Launch of Lethe
-                        # os.system('../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
-
                         os.chdir("../")
+
+                        if number == stop_number:
+                            break
+                        else:
+                            number = number+1
