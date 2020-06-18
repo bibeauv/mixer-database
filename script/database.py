@@ -15,7 +15,11 @@ array_ratioHT = np.linspace(1,1.5,2)
 array_ratioTC = np.linspace(2,5,2)
 array_ratioDW = np.linspace(3,6,2)
 
-first = len(array_ratioTD)
+# Constants
+theta = 0.785398163
+p_thick = 0.1
+
+first = len(array_ratioTD)                                      # Here!
 
 # Create array for the impeller velocity (omega)
 velocity = np.linspace(10,500,2)
@@ -23,11 +27,12 @@ velocity = np.linspace(10,500,2)
 path = "/home/bibeauv/soft/lethe/mixer-database/script"
 
 total = (len(array_ratioTD)*
-             len(array_ratioHT)*
-             len(array_ratioTC)*
-             len(array_ratioDW)*
-             len(velocity)     * 2)
+         len(array_ratioHT)*
+         len(array_ratioTC)*
+         len(array_ratioDW)*
+         len(velocity)     * 2)
 
+print ("First adimensional geometry is TD")                     # Here!
 print ("Size of the first adimensional geometry =", first)
 print ("Total of possible folders =", total)
 print ("Set the start segment :")
@@ -39,7 +44,7 @@ print ("Number of folders =", (stop-start+1)*total/first)
 number = (start-1)*total/first+1
 stop_number = stop*total/first
 
-for rTD in array_ratioTD[start-1:stop]:
+for rTD in array_ratioTD[start-1:stop]:                         # Here!
     for rTC in array_ratioTC:
         for rDW in array_ratioDW:
             for rHT in array_ratioHT:
@@ -56,8 +61,8 @@ for rTD in array_ratioTD[start-1:stop]:
                                                      ratioTC = rTC,
                                                      ratioDW = rDW,
                                                      ratioDW_Hub = rDW_Hub,
-                                                     theta = 0.785398163,
-                                                     p_thick = 0.1)
+                                                     theta = theta,
+                                                     p_thick = p_thick)
                         fic_geo.close()
 
                         # Open the parameter file
@@ -81,6 +86,16 @@ for rTD in array_ratioTD[start-1:stop]:
                         wr_prm = open("mixer.prm","w")
                         prm_file = wr_prm.write(parameters)
                         wr_prm.close()
+
+                        # Write the tag file
+                        fic_tag = open("mixer.txt","w")
+                        fic_tag.write("T/D\t%f\n" % rTD)
+                        fic_tag.write("H/T\t%f\n" % rHT)
+                        fic_tag.write("T/C\t%f\n" % rTC)
+                        fic_tag.write("D/W\t%f\n" % rDW)
+                        fic_tag.write("D/W_Hub\t%f\n" % rDW_Hub)
+                        fic_tag.write("theta\t%f\n" % theta)
+                        fic_tag.write("E\t%f\n" % p_thick)
 
                         os.chdir("../")
 
