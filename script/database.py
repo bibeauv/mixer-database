@@ -15,22 +15,29 @@ array_ratioHT = np.linspace(1,1.5,2)
 array_ratioTC = np.linspace(2,5,2)
 array_ratioDW = np.linspace(3,6,2)
 
+first = len(array_ratioTD)
+
 # Create array for the impeller velocity (omega)
 velocity = np.linspace(10,500,2)
 
 path = "/home/bibeauv/soft/lethe/mixer-database/script"
 
-start = 1
-stop = 2
-
-real_stop = (len(array_ratioTD)*
+total = (len(array_ratioTD)*
              len(array_ratioHT)*
              len(array_ratioTC)*
              len(array_ratioDW)*
              len(velocity)     * 2)
 
-number = (start-1)*real_stop/len(array_ratioTD)+1
-stop_number = stop*real_stop/len(array_ratioTD)
+print ("Size of the first adimensional geometry =", first)
+print ("Total of possible folders =", total)
+print ("Set the start segment :")
+start = int(input())
+print ("Set the stop segment :")
+stop = int(input())
+print ("Number of folders =", (stop-start+1)*total/first)
+
+number = (start-1)*total/first+1
+stop_number = stop*total/first
 
 for rTD in array_ratioTD[start-1:stop]:
     for rTC in array_ratioTC:
