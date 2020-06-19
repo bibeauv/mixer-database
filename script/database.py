@@ -15,14 +15,15 @@ array_ratioHT = np.linspace(1,1.5,2)
 array_ratioTC = np.linspace(2,5,2)
 array_ratioDW = np.linspace(3,6,2)
 
+# Create array for the impeller velocity (omega)
+velocity = np.linspace(10,500,2)
+
 # Constants
 theta = 0.785398163
 p_thick = 0.1
 
+# First geometry parameter of the loop
 first = len(array_ratioTD)                                      # Here!
-
-# Create array for the impeller velocity (omega)
-velocity = np.linspace(10,500,2)
 
 path = "/home/bibeauv/soft/lethe/mixer-database/script"
 
@@ -32,6 +33,7 @@ total = (len(array_ratioTD)*
          len(array_ratioDW)*
          len(velocity)     * 2)
 
+# Start and stop segment for fragmentation
 print ("First adimensional geometry is TD")                     # Here!
 print ("Size of the first adimensional geometry =", first)
 print ("Total of possible folders =", total)
@@ -41,9 +43,10 @@ print ("Set the stop segment :")
 stop = int(input())
 print ("Number of folders =", (stop-start+1)*total/first)
 
-number = (start-1)*total/first+1
+start_number = (start-1)*total/first+1
 stop_number = stop*total/first
 
+number = start_number
 for rTD in array_ratioTD[start-1:stop]:                         # Here!
     for rTC in array_ratioTC:
         for rDW in array_ratioDW:
