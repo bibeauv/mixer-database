@@ -92,13 +92,13 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
 
                         # Write the tag file
                         fic_tag = open("mixer.txt","w")
-                        fic_tag.write("T/D\t%f\n" % rTD)
-                        fic_tag.write("H/T\t%f\n" % rHT)
-                        fic_tag.write("T/C\t%f\n" % rTC)
-                        fic_tag.write("D/W\t%f\n" % rDW)
-                        fic_tag.write("D/W_Hub\t%f\n" % rDW_Hub)
-                        fic_tag.write("theta\t%f\n" % theta)
-                        fic_tag.write("E\t%f\n" % p_thick)
+                        fic_tag.write("T/D\t%f\t" % rTD)
+                        fic_tag.write("H/T\t%f\t" % rHT)
+                        fic_tag.write("T/C\t%f\t" % rTC)
+                        fic_tag.write("D/W\t%f\t" % rDW)
+                        fic_tag.write("D/W_Hub\t%f\t" % rDW_Hub)
+                        fic_tag.write("theta\t%f\t" % theta)
+                        fic_tag.write("E\t%f\t" % p_thick)
 
                         os.chdir("../")
 
