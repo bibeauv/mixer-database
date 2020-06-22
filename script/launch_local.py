@@ -19,4 +19,4 @@ for d in dirs:
     os.system('gmsh -3 mixer.geo')
 
     # Launch Lethe
-    # os.system('lethe gls_navier_stokes_3d')
+    os.system('../../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
