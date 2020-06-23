@@ -156,6 +156,6 @@ Physical Surface(3) = {48}; // Bottom
 Physical Surface(4) = {49};
 
 // PBT :
-Physical Surface(5) = {32, 23, 35, 24, 34, 25, 33, 42, 38, 43, 45, 39, 37, 50, 40, 36, 41, 44, 30, 29, 21, 27, 22, 28, 20};
+Physical Surface(5) = {{pbt_physical_surface}};
 
 Physical Volume(6) = {3};

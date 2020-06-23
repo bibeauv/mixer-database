@@ -51,13 +51,17 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
     for rTC in array_ratioTC:
         for rDW in array_ratioDW:
             for rHT in array_ratioHT:
-                array_ratioDW_Hub = [rTD, rTD-0.4*rTD]
+                array_ratioDW_Hub = [rDW, 0.6*rDW]
                 for rDW_Hub in array_ratioDW_Hub:
                     for v in velocity:
                         # Open the geometry file
                         fic_geo = open("mixer.geo","r")
                         cte_geo = fic_geo.read()
                         # Insert the geometry
+                        if rDW_Hub == rDW:
+                            pbt = "{32, 23, 35, 24, 34, 25, 33, 42, 38, 43, 45, 39, 37, 50, 40, 36, 41, 44, 30, 29, 21, 27, 22, 28, 20}"
+                        else:
+                            pbt = "{33, 25, 35, 24, 34, 21, 29, 27, 22, 28, 40, 36, 44, 41, 37, 42, 38, 43, 39, 45, 20, 32, 31, 30, 23, 52, 53, 50, 51}"
                         template = Template(cte_geo)
                         geometries = template.render(ratioTD = rTD,
                                                      ratioHT = rHT,
@@ -65,8 +69,10 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
                                                      ratioDW = rDW,
                                                      ratioDW_Hub = rDW_Hub,
                                                      theta = theta,
-                                                     p_thick = p_thick)
+                                                     p_thick = p_thick,
+                                                     pbt_physical_surface = pbt)
                         fic_geo.close()
+                        del pbt
 
                         # Open the parameter file
                         fic_prm = open("mixer.prm","r")
