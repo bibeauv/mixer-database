@@ -17,6 +17,8 @@ for d in dirs:
     
     # Launch gmsh
     os.system('gmsh -3 mixer.geo')
+    print("---------- Generating mesh of " + d + " is complete ----------")
 
     # Launch Lethe
     os.system('../../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
+    print("---------- Simulation of " + d + " is complete ----------")
