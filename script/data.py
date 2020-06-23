@@ -8,6 +8,7 @@
 # Valérie Bibeau, Polytechnique Montréal, 2020
 
 import os
+import math
 
 path = "/home/bibeauv/soft/lethe/mixer-database/script/"
 
@@ -22,6 +23,9 @@ for d in dirs:
     fic_tag = open("mixer.txt","r")
     geo_info = fic_tag.read()
     fic_data.write(geo_info)
+    geo_info = geo_info.split("\t")
+    N = geo_info[-2] # Angular velocity
+    D = geo_info[7] # Impeller diameter
     fic_tag.close()
 
     with open("torque.03.dat","r") as fic_torque:
@@ -30,8 +34,16 @@ for d in dirs:
     
     get_torque = lines[-1]
     get_torque = get_torque.split(" ")
-    get_torque = get_torque[3]
+    torque = get_torque[3]
 
-    fic_data.write("torque\t%s\n" % get_torque)
+    # Calculate Reynolds number and power number
+    N = float(N)
+    D = 1/float(D)
+    torque = float(torque)
+    Re = D*D*N
+    Np = 2*math.pi*torque/N/N/D/D/D/D/D
+
+    fic_data.write("Re\t%f\t" % Re)
+    fic_data.write("Np\t%f\n" % Np)
 
 fic_data.close()

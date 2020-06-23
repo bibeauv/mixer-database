@@ -40,7 +40,7 @@ end
 #--------------------------------------------------
 subsection velocity source
     set type=srf
-    set omega_z=-10.0
+    set omega_z=-500.0
 end
 
 #--------------------------------------------------
@@ -83,10 +83,10 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -10.0*y
+            set Function expression = -500.0*y
         end
         subsection v
-            set Function expression = 10.0*x
+            set Function expression = 500.0*x
         end
         subsection w
             set Function expression = 0

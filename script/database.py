@@ -97,8 +97,9 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
                         fic_tag.write("T/C\t%f\t" % rTC)
                         fic_tag.write("D/W\t%f\t" % rDW)
                         fic_tag.write("D/W_Hub\t%f\t" % rDW_Hub)
-                        fic_tag.write("theta\t%f\t" % theta)
                         fic_tag.write("E\t%f\t" % p_thick)
+                        fic_tag.write("theta\t%f\t" % theta)
+                        fic_tag.write("omega\t%f\t" % v)
 
                         os.chdir("../")
 
