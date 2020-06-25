@@ -51,7 +51,7 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
     for rTC in array_ratioTC:
         for rDW in array_ratioDW:
             for rHT in array_ratioHT:
-                array_ratioDW_Hub = [rDW, 0.6*rDW]
+                array_ratioDW_Hub = [rDW, 0.75*rDW]
                 for rDW_Hub in array_ratioDW_Hub:
                     for v in velocity:
                         # Open the geometry file
