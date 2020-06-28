@@ -23,7 +23,7 @@ for d in dirs:
     # Launch gmsh
     ok = False
     mesh_length = 0.04
-    while ok == False:
+    while ok == False and mesh_length > 0:
         os.system('cp mixer.geo mixer_copy.geo')
 
         fic_geo = open("mixer_copy.geo","r")
