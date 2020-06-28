@@ -65,7 +65,8 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
                                                      ratioDW = rDW,
                                                      ratioDW_Hub = rDW_Hub,
                                                      theta = theta,
-                                                     p_thick = p_thick)
+                                                     p_thick = p_thick,
+                                                     mesh_length = "{{mesh_length}}")
                         fic_geo.close()
 
                         # Open the parameter file
@@ -83,11 +84,11 @@ for rTD in array_ratioTD[start-1:stop]:                         # Here!
                         os.chdir(newPath)
                         # Write the geometry file and the parameter file
                         wr_geo = open("mixer.geo","w")
-                        geo_file = wr_geo.write(geometries)
+                        wr_geo.write(geometries)
                         wr_geo.close()
 
                         wr_prm = open("mixer.prm","w")
-                        prm_file = wr_prm.write(parameters)
+                        wr_prm.write(parameters)
                         wr_prm.close()
 
                         # Write the tag file

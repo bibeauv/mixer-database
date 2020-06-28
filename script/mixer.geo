@@ -30,7 +30,7 @@ E = {{p_thick}}*W;
 // Mesh
 // -------------------------------------------
 Mesh.CharacteristicLengthMin = 0.005;
-Mesh.CharacteristicLengthMax = 0.04;
+Mesh.CharacteristicLengthMax = {{mesh_length}};
 Mesh.ElementOrder = 1;
 Mesh.SecondOrderLinear = 1;
 Mesh.HighOrderOptimize = 1;

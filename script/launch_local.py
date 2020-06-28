@@ -4,8 +4,12 @@
 # ______________
 # Valérie Bibeau, Polytechnique Montréal, 2020
 
+from jinja2 import Template
 import os
+from subprocess import Popen, PIPE
 import time
+import warnings
+warnings.filterwarnings("error")
 
 path = "/home/bibeauv/soft/lethe/mixer-database/script/"
 
@@ -17,11 +21,33 @@ for d in dirs:
     os.chdir(sim_path)
     
     # Launch gmsh
-    os.system('gmsh -3 mixer.geo')
-    print("---------- Generating mesh of " + d + " is complete ----------")
+    ok = False
+    mesh_length = 0.04
+    while ok == False:
+        os.system('cp mixer.geo mixer_copy.geo')
+
+        fic_geo = open("mixer_copy.geo","r")
+        cte_geo = fic_geo.read()
+        template = Template(cte_geo)
+        mesh = template.render(mesh_length = mesh_length)
+        fic_geo.close()
+
+        wr_geo = open("mixer_copy.geo","w")
+        wr_geo.write(mesh)
+        wr_geo.close()
+
+        p = Popen(['gmsh -3 mixer_copy.geo -o mixer.msh'], stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
+
+        if stderr != b'':
+            mesh_length = mesh_length - 0.01
+            os.system('rm mixer_copy.geo')
+        else:
+            ok = True
+            print("---------- Generating mesh of " + d + " is complete ----------") 
 
     # Launch Lethe
-    #os.system('../../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
-    #print("---------- Simulation of " + d + " is complete ----------")
+    os.system('../../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
+    print("---------- Simulation of " + d + " is complete ----------")
 
 print("---------- Total time of execution : %s seconds ----------" % (time.time() - start_time))
