@@ -42,12 +42,9 @@ for d in dirs:
         if stderr != b'':
             mesh_length = mesh_length - 0.01
             os.system('rm mixer_copy.geo')
+            print("*Mesh had been refined*")
         else:
             ok = True
-            print("---------- Generating mesh of " + d + " is complete ----------") 
-
-    # Launch Lethe
-    os.system('../../../build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm')
-    print("---------- Simulation of " + d + " is complete ----------")
+            print("---------- Generating mesh of " + d + " is complete ----------")
 
 print("---------- Total time of execution : %s seconds ----------" % (time.time() - start_time))
