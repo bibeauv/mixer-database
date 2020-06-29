@@ -7,4 +7,5 @@
 #SBATCH --mail-user=valerie.bibeau@hotmail.ca
 #SBATCH --output=%x-%j.out
 
-srun gls_navier_stokes_3d mixer.prm
+source $HOME/.dealii
+srun ../lethe/build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm

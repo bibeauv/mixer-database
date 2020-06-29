@@ -11,7 +11,7 @@ import time
 import warnings
 warnings.filterwarnings("error")
 
-path = "/home/bibeauv/soft/lethe/mixer-database/script/"
+path = "/home/bibeauv/scratch/"
 
 path, dirs, files = next(os.walk(path))
 
@@ -21,4 +21,4 @@ for d in dirs:
     os.chdir(sim_path)
     os.system('cp ' + path + 'launch.sh ' + path + d)
 
-    os.system('sbatch launch_mixer.sh')
+    os.system('sbatch launch.sh')
