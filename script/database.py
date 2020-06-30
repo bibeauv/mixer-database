@@ -23,18 +23,18 @@ theta = 0.785398163
 p_thick = 0.1
 
 # First geometry parameter of the loop
-first = len(array_ratioTD)                                      # Here!
+first = len(array_ratioTD)                                      # Fragmentation
 
-path = "/home/bibeauv/soft/lethe/mixer-database/script"
+path = os.getcwd()
 
 total = (len(array_ratioTD)*
          len(array_ratioHT)*
          len(array_ratioTC)*
          len(array_ratioDW)*
-         len(velocity)     * 2)
+         len(velocity)     * 2)                                 # Hub
 
 # Start and stop segment for fragmentation
-print ("First adimensional geometry is TD")                     # Here!
+print ("First adimensional geometry is TD")                     # Fragmentation
 print ("Size of the first adimensional geometry =", first)
 print ("Total of possible folders =", total)
 print ("Set the start segment :")
@@ -47,11 +47,11 @@ start_number = (start-1)*total/first+1
 stop_number = stop*total/first
 
 number = start_number
-for rTD in array_ratioTD[start-1:stop]:                         # Here!
+for rTD in array_ratioTD[start-1:stop]:                         # Fragmentation
     for rTC in array_ratioTC:
         for rDW in array_ratioDW:
             for rHT in array_ratioHT:
-                array_ratioDW_Hub = [rDW, 0.75*rDW]
+                array_ratioDW_Hub = [rDW, 0.75*rDW]             # Hub
                 for rDW_Hub in array_ratioDW_Hub:
                     for v in velocity:
                         # Open the geometry file
