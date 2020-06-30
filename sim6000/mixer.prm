@@ -9,7 +9,7 @@ subsection simulation control
   set output name             = mixer
   set output frequency        = 1
   set subdivision             = 0
-  set number mesh adapt       = 1
+  set number mesh adapt       = 0
 end
 
 #---------------------------------------------------
