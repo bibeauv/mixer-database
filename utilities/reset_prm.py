@@ -12,6 +12,7 @@ path, dirs, files = next(os.walk(path))
 for d in dirs:
     sim_path = path + d
     os.chdir(sim_path)
+    os.system('rm *.out')
     
     with open("mixer.prm", "r+") as f:
         l = f.readlines()
