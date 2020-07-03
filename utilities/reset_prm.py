@@ -5,6 +5,7 @@
 
 from jinja2 import Template
 import os
+import sys
 import numpy as np
 
 path = os.getcwd() + "/"
@@ -13,6 +14,8 @@ velocity = np.linspace(0.1,500,10)
 
 first = np.arange(1,6250,10)
 
+progress = 1
+total = 6250
 for i in first:
     group = np.linspace(i,i+9,10)
     j = 0
@@ -35,3 +38,9 @@ for i in first:
         os.chdir("../")
 
         j += 1
+
+        pourcentage = progress/total*100
+        sys.stdout.write("\rProgress: " + str(pourcentage) + "%")
+        sys.stdout.flush()
+        progress += 1
+sys.stdout.write("\n")
