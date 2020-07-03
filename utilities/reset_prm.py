@@ -3,27 +3,35 @@
 # ____________________
 # Valérie Bibeau, 2020
 
+from jinja2 import Template
 import os
+import numpy as np
 
 path = os.getcwd() + "/"
 
-path, dirs, files = next(os.walk(path))
+velocity = np.linspace(0.1,500,10)
 
-for d in dirs:
-    sim_path = path + d
-    os.chdir(sim_path)
-    
-    out = next(os.walk(sim_path))[2]
-    for out_string in out:
-        if ".out" in out_string:
-            os.system('rm *.out')
-    
-    with open("mixer.prm", "r+") as f:
-        l = f.readlines()
-        f.seek(0)
-        for i in l:
-            if i != "  set number mesh adapt       = -1\n":
-                f.write(i)
-        f.truncate
+first = np.arange(1,6250,10)
 
-    print("--- " + d + " is clear! ---")
+for i in first:
+    group = np.linspace(i,i+9,10)
+    j = 0
+    for v in velocity:
+        # Open the parameter file
+        fic_prm = open("mixer.prm","r")
+        cte_prm = fic_prm.read()
+        # Insert the parameters
+        template_prm = Template(cte_prm)
+        parameters = template_prm.render(omega = v)
+        fic_prm.close()
+
+        mixer = "mixer_" + str(int(group[j]))
+        sim_path = path + mixer
+        os.chdir(sim_path)
+        wr_prm = open("mixer.prm","w")
+        wr_prm.write(parameters)
+        wr_prm.close()
+
+        os.chdir("../")
+
+        j += 1
