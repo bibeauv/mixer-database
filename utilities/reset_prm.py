@@ -12,7 +12,11 @@ path, dirs, files = next(os.walk(path))
 for d in dirs:
     sim_path = path + d
     os.chdir(sim_path)
-    os.system('rm *.out')
+    
+    out = next(os.walk(sim_path))[2]
+    for out_string in out:
+        if ".out" in out_string:
+            os.system('rm *.out')
     
     with open("mixer.prm", "r+") as f:
         l = f.readlines()
@@ -21,3 +25,5 @@ for d in dirs:
             if i != "  set number mesh adapt       = -1\n":
                 f.write(i)
         f.truncate
+
+    print("--- " + d + " is clear! ---")
