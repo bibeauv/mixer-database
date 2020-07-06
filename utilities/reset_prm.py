@@ -9,15 +9,18 @@ import sys
 import numpy as np
 
 path = os.getcwd() + "/"
+path, dirs, files = next(os.walk(path))
+number_of_dirs = len(dirs)
+step = 10                                                   # Here!
 
-velocity = np.linspace(0.1,500,10)
+velocity = np.linspace(0.1,500,step)
 
-first = np.arange(1,6250,10)
+first = np.arange(1,number_of_dirs,step)
 
 progress = 1
-total = 6250
+total = number_of_dirs
 for i in first:
-    group = np.linspace(i,i+9,10)
+    group = np.linspace(i,i+step-1,step)
     j = 0
     for v in velocity:
         # Open the parameter file
@@ -39,8 +42,8 @@ for i in first:
 
         j += 1
 
-        pourcentage = progress/total*100
-        sys.stdout.write("\rProgress: " + str(pourcentage) + "%")
+        pourcentage = progress/total
+        sys.stdout.write("\rProgress: " + "{:.2%}".format(pourcentage))
         sys.stdout.flush()
         progress += 1
 sys.stdout.write("\n")
