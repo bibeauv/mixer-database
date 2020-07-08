@@ -42,7 +42,7 @@ for d in dirs:
         if stderr != b'':
             mesh_length = mesh_length - 0.01
             os.system('rm mixer_copy.geo')
-            print("*Mesh had been refined*")
+            print("*Mesh has been refined*")
         else:
             ok = True
             print("---------- Generating mesh of " + d + " is complete ----------")

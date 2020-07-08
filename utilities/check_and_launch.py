@@ -11,10 +11,18 @@ path = os.getcwd() + "/"
 path, dirs, files = next(os.walk(path))
 number_of_dirs = len(dirs)
 
-number_of_mixers = np.linspace(1,number_of_dirs,number_of_dirs)
+print ("Total of folders =", number_of_dirs)
+print ("Set the first mixer to simulate :")
+start = int(input())
+print ("Set the last mixer to simulate :")
+stop = int(input())
+
+total_mixer = stop - start + 1
+
+number_of_mixers = np.linspace(start,stop,total_mixer,dtype=int)
 
 for i in number_of_mixers:
-    mixer_path =  "mixer_" + str(int(i))
+    mixer_path =  "mixer_" + str(i)
     sim_path = path + mixer_path
     os.chdir(sim_path)
 
@@ -26,6 +34,9 @@ for i in number_of_mixers:
         if len(lines) != 2:
             raise
 
+        print(mixer_path + " is OK!")
+
     except:
-        #os.system('sbatch -J ' + mixer_path + ' launch.sh')
-        print(mixer_path + " relaunch!")
+        print("********** " + mixer_path + " will be launched again! **********")
+        os.system('cp ../launch.sh .')
+        os.system('sbatch -J ' + mixer_path + ' launch.sh')
