@@ -8,19 +8,36 @@
 # Valérie Bibeau, Polytechnique Montréal, 2020
 
 import os
+import sys
 import math
+import numpy as np
 
 path = os.getcwd() + "/"
 
 path, dirs, files = next(os.walk(path))
+number_of_dirs = len(dirs)
 
-open("mixer_database.txt", "w").close()
-fic_data = open("mixer_database.txt","a")
-for d in dirs:
-    sim_path = path + d
+print ("Total of folders =", number_of_dirs)
+print ("Set the first mixer to simulate :")
+start = int(input())
+print ("Set the last mixer to simulate :")
+stop = int(input())
+
+total_mixer = stop - start + 1
+
+set_dirs = np.linspace(start,stop,total_mixer,dtype=int)
+
+progress = 1
+
+database_name = "mixer_database_" + str(start) + "-" + str(stop)
+
+open(database_name + ".txt", "w").close()
+fic_data = open(database_name + ".txt", "a")
+for d in set_dirs:
+    sim_path = path + "mixer_" + str(d)
     os.chdir(sim_path)
 
-    fic_data.write(d + "\t")
+    fic_data.write("mixer_" + str(d) + "\t")
 
     fic_tag = open("mixer.txt","r")
     geo_info = fic_tag.read()
@@ -51,5 +68,11 @@ for d in dirs:
 
     except:
         fic_data.write("!SIMULATION FAILED!\n")
+    
+    pourcentage = progress/total_mixer
+    sys.stdout.write("\rProgress: " + "{:.2%}".format(pourcentage))
+    sys.stdout.flush()
+    progress += 1
 
 fic_data.close()
+sys.stdout.write("\n")
