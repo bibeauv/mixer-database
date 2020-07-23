@@ -1,4 +1,4 @@
-function X_norm = predictScalingX(X, X_predict, no_scaling)
+function X_norm = predictScaling(X, X_predict, no_scaling)
 
 % ============================================================================
 % This function scales the features X and the prediction y
@@ -19,7 +19,7 @@ n = size(X,2);
 
 X_norm = X_predict;
 
-for f = 2:n
+for f = 1:n
     if all(f ~= no_scaling)
         maximum = max(X(:,f));
         minimum = min(X(:,f));

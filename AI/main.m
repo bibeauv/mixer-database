@@ -12,75 +12,22 @@ clc; clear all;
 % ============================================================================
 
 % Get the database
-mixer = {};
-T_D = [];
-H_T = [];
-T_C = [];
-D_W = [];
-D_WHub = [];
-E = [];
-theta = [];
-omega = [];
-density = [];
-viscosity = [];
-Re = [];
-Np = [];
-
-disp('Reading data file ...')
-fic_data = fopen('mixer_database_1-6250.txt','r');
-if fic_data == -1
-    disp('Error: The datafile did not open correctly.')
-else
-    mixer{end+1} = fscanf(fic_data,'%s',1);
-    while isempty(mixer{end}) == 0
-        fscanf(fic_data,'%s',1); T_D(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); H_T(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); T_C(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); D_W(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); D_WHub(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); E(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); theta(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); omega(end+1) = fscanf(fic_data,'%f',1);
-                                 density(end+1) = 1;
-                                 viscosity(end+1) = 1;
-        fscanf(fic_data,'%s',1); Re(end+1) = fscanf(fic_data,'%f',1);
-        fscanf(fic_data,'%s',1); Np(end+1) = fscanf(fic_data,'%f',1);
-
-        mixer{end+1} = fscanf(fic_data,'%s',1);
-    end
-end
-fclose(fic_data);
-disp('Done reading datafile!')
-
-% Create the X matrix and the y vector
-m = length(mixer)-1;
-n = 10;
-X = [ones(m,1), ...
-    T_D', ...
-    H_T', ...
-    T_C', ...
-    D_W', ...
-    D_WHub', ...
-    E', ...
-    theta', ...
-    omega', ...
-    density', ...
-    viscosity'];
-y = Np';
+[X, y] = getMixerData('mixer_database_1-6250.txt');
 
 % Feature scaling
-no_scaling = [7, 8, 10, 11];
-[X_norm, y_norm] = featureScaling(X, y, no_scaling);
+no_scaling = [1, 7, 8, 10, 11];
+X_norm = featureScaling(X, no_scaling);
 
 % Gradient descent without regularization
-theta = zeros(n+1,1);
+n = size(X,2);
+theta = zeros(n,1);
 alpha = 0.1;
-max_iters = 1500;
+max_iters = 1000;
 lambda = 1000;
 tol = 1e-10;
-[J_history, theta] = gradientDescent(X_norm, y_norm, theta, alpha, tol, max_iters, true, lambda);
+[J_history, theta] = gradientDescent(X_norm, y, theta, alpha, max_iters, false, lambda);
 
-% Predict
+% Prediction
 X_predict = [1, ...         
              3.0, ...       % T/D
              1.4, ...       % H/T
@@ -92,11 +39,9 @@ X_predict = [1, ...
              150, ...       % omega
              1, 1];         % density, viscosity
 
-X_predict_norm = predictScalingX(X, X_predict, no_scaling);
+X_predict_norm = predictScaling(X, X_predict, no_scaling);
 
-y_predict_norm = X_predict_norm*theta;
-
-y_predict = predictScalingY(y, y_predict_norm, no_scaling);
+y_predict = X_predict_norm*theta;
 
 fprintf('Prediction for the power number: %.2f \n', y_predict)
 disp('Power number from simulation: 643.824543')

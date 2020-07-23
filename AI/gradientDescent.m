@@ -1,4 +1,4 @@
-function [J_history, theta] = gradientDescent(X, y, theta, alpha, tol, max_iters, regularization, lambda)
+function [J_history, theta] = gradientDescent(X, y, theta, alpha, max_iters, regularization, lambda)
 
 % ============================================================================
 % This function calculate the parameters theta 
@@ -25,7 +25,7 @@ J_history = [];
 diff = 1;
 it = 0;
 
-while diff > tol && it < max_iters
+while it < max_iters
     if regularization == true
         [jVal, gradient] = costFunctionReg(X, y, theta, alpha, lambda);
     else
@@ -33,10 +33,11 @@ while diff > tol && it < max_iters
     end
 
     J_history = [J_history; jVal];
+
     theta = theta - gradient;
 
     fprintf('Nb of iteration: %d \n', it)
-    fprintf('Value of J(theta): %f \n', jVal)
+    fprintf('Value of J(theta): %e \n', jVal)
     if it > 0
         diff = abs(J_history(it+1) - J_history(it));
         fprintf('Difference: %e \n', diff);
