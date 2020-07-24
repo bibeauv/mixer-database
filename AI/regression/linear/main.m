@@ -28,15 +28,15 @@ clc; clear all;
 [X, y] = getMixerData('mixer_database_1-6250.txt');
 
 % Remove feature that are includ in Reynolds number
-remove = [7 8 9 10 11];
+remove = [9 10 11];
 X(:,remove) = [];
 
 % Remove outlier data (Re that are too low, therefor Np that are too high)
-clean = [7];
+clean = [9];
 [X, y] = cleanUp(X, y, clean, 0.1);
 
 % Feature scaling
-no_scaling = [1];
+no_scaling = [1 7 8];
 X_norm = featureScaling(X, no_scaling);
 
 % Gradient descent without regularization
@@ -54,11 +54,25 @@ X_predict = [1, ...
              2.2, ...       % T/C
              3.5, ...       % D/W
              2.1, ...       % D/W_Hub
-             2.6526];       % Re
+             0.1, ...       % E
+             0.785398, ...  % theta
+             2.6526; ...    % Re
+             1, ...         
+             2.5, ...       % T/D
+             1.1, ...       % H/T
+             4.3, ...       % T/C
+             3.9, ...       % D/W
+             3.1, ...       % D/W_Hub
+             0.1, ...       % E
+             0.785398, ...  % theta
+             5.092958]      % Re
 
-X_predict_norm = predictScaling(X, X_predict, no_scaling);
-
+X_predict_norm = predictScaling(X, X_predict(1,:), no_scaling);
 y_predict = X_predict_norm*theta;
-
-fprintf('Prediction for the power number: %.2f \n', y_predict)
+fprintf('Prediction for the power number: %.4f \n', y_predict)
 disp('Power number from simulation: 21.729078')
+
+X_predict_norm = predictScaling(X, X_predict(2,:), no_scaling);
+y_predict = X_predict_norm*theta;
+fprintf('Prediction for the power number: %.4f \n', y_predict)
+disp('Power number from simulation: 9.423747')
