@@ -44,8 +44,8 @@ n = size(X,2);
 theta = zeros(n,1);
 alpha = 0.1;
 max_iters = 200;
-lambda = 10000;
-[J_history, theta] = gradientDescent(X_norm, y, theta, alpha, max_iters, true, lambda);
+lambda = 0;
+[J_history, theta] = gradientDescent(X_norm, y, theta, alpha, lambda, max_iters);
 
 % Prediction
 X_predict = [1, ...         

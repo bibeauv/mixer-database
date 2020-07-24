@@ -1,4 +1,4 @@
-function [jVal, gradient] = costFunction(X, y, theta, alpha)
+function [jVal, gradient] = costFunction(X, y, theta, alpha, lambda)
 
 % ============================================================================
 % This function calculate the cost function J
@@ -29,5 +29,6 @@ for i = 1:m
     end
 end
 
-jVal = sum_j/(2*m);
+jVal = sum_j/(2*m) + lambda/(2*m) * sum(theta(2:end).^2);
 gradient = sum_dj*alpha/m;
+gradient(2:end) = gradient(2:end) + lambda*alpha/m * theta(2:end);
