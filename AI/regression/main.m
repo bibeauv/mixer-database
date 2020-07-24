@@ -1,5 +1,7 @@
 clc; clear all;
 
+addpath('/home/bibeauv/soft/lethe/mixer-database/AI/regression/lib')
+
 % ============================================================================
 % This main programm will be able to train the mixer database.
 % This programm is to test the regression algorithm.
