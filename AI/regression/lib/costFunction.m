@@ -2,7 +2,8 @@ function [jVal, gradient] = costFunction(X, y, theta, alpha, lambda)
 
 % ============================================================================
 % This function calculate the cost function J
-% and its gradient for each parameters theta
+% and its gradient for each parameters theta.
+% If lambda = 0, there is no regularization.
 
 % Input :
 %           - X : input matrix
@@ -15,7 +16,7 @@ function [jVal, gradient] = costFunction(X, y, theta, alpha, lambda)
 %           - gradient : gradient of J for each theta
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 m = length(y);

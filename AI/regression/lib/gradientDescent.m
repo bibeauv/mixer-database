@@ -2,7 +2,7 @@ function [J_history, theta] = gradientDescent(X, y, theta, alpha, lambda, max_it
 
 % ============================================================================
 % This function calculate the parameters theta 
-% of a regression problem with the gradient descent algorithm
+% of a regression problem with the gradient descent algorithm.
 
 % Input :
 %           - X : input matrix
@@ -18,7 +18,7 @@ function [J_history, theta] = gradientDescent(X, y, theta, alpha, lambda, max_it
 %           - theta : final theta
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 J_history = [];

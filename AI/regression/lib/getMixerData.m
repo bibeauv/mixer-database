@@ -1,7 +1,7 @@
 function [X, y] = getMixerData(fileName)
 
 % ============================================================================
-% This function scales the features X and the prediction y
+% This function gets the data of the mixers.
 
 % Input :
 %           - fileName : name of the text file where the database of the
@@ -12,7 +12,7 @@ function [X, y] = getMixerData(fileName)
 %           - y : target vector
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 mixer = {};

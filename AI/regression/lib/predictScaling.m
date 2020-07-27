@@ -1,7 +1,7 @@
 function X_norm = predictScaling(X, X_predict, no_scaling)
 
 % ============================================================================
-% This function scales the features X and the prediction y
+% This function scales the features X for prediction.
 
 % Input :
 %           - X : input matrix
@@ -12,7 +12,7 @@ function X_norm = predictScaling(X, X_predict, no_scaling)
 %           - X_norm : input matrix normalized
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 n = size(X,2);

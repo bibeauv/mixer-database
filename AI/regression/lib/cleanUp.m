@@ -1,7 +1,7 @@
 function [X_clean, y_clean] = cleanUp(X, y, feature, limit)
 
 % ============================================================================
-% This function scales the matrix X and the target vector y
+% This function cleans up the outliers.
 
 % Input :
 %           - X : input matrix
@@ -14,7 +14,7 @@ function [X_clean, y_clean] = cleanUp(X, y, feature, limit)
 %           - y_clean : new target vector
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 m = size(X,1);

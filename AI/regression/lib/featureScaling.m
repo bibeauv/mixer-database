@@ -1,7 +1,7 @@
 function X_norm = featureScaling(X, no_scaling)
 
 % ============================================================================
-% This function scales the matrix X and the target vector y
+% This function scales the matrix X and the target vector y.
 
 % Input :
 %           - X : input matrix
@@ -13,7 +13,7 @@ function X_norm = featureScaling(X, no_scaling)
 %           - y_norm : target vector normalized
 
 % ----------------------------------------------------
-% Autor : Valérie Bibeau, Polytechnique Montréal, 2020
+% Author : Valérie Bibeau, Polytechnique Montréal, 2020
 % ============================================================================
 
 n = size(X,2);
