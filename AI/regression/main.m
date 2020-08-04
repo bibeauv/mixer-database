@@ -1,6 +1,7 @@
 clc; clear all;
 
-addpath('/home/bibeauv/soft/lethe/mixer-database/AI/regression/lib')
+path = pwd;
+addpath([pwd, '/lib'])
 
 % ============================================================================
 % This main programm will be able to train the mixer database.
