@@ -2,3 +2,6 @@
 *.vtu
 *.pvtu
 *.pvd
+
+# VsCode
+.vscode/*
