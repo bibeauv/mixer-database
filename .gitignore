@@ -4,4 +4,7 @@
 *.pvd
 
 # VsCode
-.vscode/*
+*/.vscode
+
+# Python
+*/__pycache__
