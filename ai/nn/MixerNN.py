@@ -65,18 +65,20 @@ def clean_low_Re(data, treshold, enable):
         data = np.array(data_list)
     return data
 
-def initial_setup(data, test_size):
+def initial_setup(data, test_size, target_index, random_state):
     """Set up the training and testing set
 
     Args:
         data (array): Mixers' dataset
         test_size (float): Fraction of the training set that will be tested
+        target_index (array): Index of the features that will be preserved
+        random_state (int): Random number to split the training and testing set
 
     Returns:
         X and y: Features and target values of the training and testing set
     """
     # Separate features from target values (omega is skipped)
-    X = data[:,[0, 1, 2, 3, 4, 5, 6, 8]]
+    X = data[:,target_index]
     y = data[:,9]
     y = np.reshape(y, (-1, 1))
     # Normalizing features
@@ -89,14 +91,15 @@ def initial_setup(data, test_size):
     # Split the data into training and testing
     X_train, X_test, y_train, y_test = train_test_split(Xscale, yscale, 
                                                         test_size=test_size,
-                                                        random_state=42)
+                                                        random_state=random_state)
     return X_train, X_test, y_train, y_test, scaler_X, scaler_y
 
-def fit_model(X_train, y_train, learning_rate, l2, epochs, val_frac, architecture, units, layers):
+def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac, architecture, units, layers, verbose):
     """Neural Network architecture/model to train the mixers
 
     Args:
         X_train and y_train: Features and target values of the training set
+        no_features (int): Number of features
         learning_rate (float): Learning rate of the gradient descent
         l2 (float): Regularization constant
         epochs (int): Number of iterations
@@ -104,6 +107,7 @@ def fit_model(X_train, y_train, learning_rate, l2, epochs, val_frac, architectur
         architecture (string): Type of the architecture
         units (int): Number of units of the first hidden layer
         layers (int): Number of layers in the NN
+        verbose (int)
 
     Returns:
         history: History of the algorithme
@@ -117,7 +121,7 @@ def fit_model(X_train, y_train, learning_rate, l2, epochs, val_frac, architectur
     # Architecture of the Neural Network
     if architecture == 'deep':
         model = Sequential()
-        model.add(Dense(units, input_dim=8, kernel_initializer=ini, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, activation='relu'))
         l = 1
         while l <= layers:
             model.add(Dense(units, kernel_initializer=ini, activation='relu'))
@@ -125,7 +129,7 @@ def fit_model(X_train, y_train, learning_rate, l2, epochs, val_frac, architectur
         model.add(Dense(1,     kernel_initializer=ini, activation='linear'))
     elif architecture == 'cascade':
         model = Sequential()
-        model.add(Dense(units, input_dim=8, kernel_initializer=ini, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, activation='relu'))
         l = 1
         while l <= layers and units >= 2:
             units = units/2
@@ -135,7 +139,7 @@ def fit_model(X_train, y_train, learning_rate, l2, epochs, val_frac, architectur
     # Compile and Fit
     model.compile(loss='mse', optimizer=opt, metrics=['mse','mae','mape'])
     model.summary()
-    history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=0)
+    history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=verbose)
     return history, model, model.count_params()
 
 def mean_absolute_percentage_error(y_true, y_pred):
