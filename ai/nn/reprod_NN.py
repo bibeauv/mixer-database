@@ -41,7 +41,7 @@ for rep in np.arange(0,20):
                                             no_features=len(target_index),
                                             learning_rate=0.1,
                                             l2=0.0,
-                                            epochs=2000,
+                                            epochs=500,
                                             val_frac=0.2,
                                             architecture='cascade',
                                             units=512,
@@ -51,18 +51,21 @@ for rep in np.arange(0,20):
     no_params.insert(len(no_params), params)
 
     # Gather the metrics for each NN
+    # MSE
     mse.insert(len(mse), history.history['mse'][-1])
     val_mse.insert(len(val_mse), history.history['val_mse'][-1])
     test_mse.insert(len(test_mse), mean_squared_error(y_true=y_test, y_pred=model.predict(X_test)))
+    # MAE
     mae.insert(len(mae), history.history['mae'][-1])
     val_mae.insert(len(val_mae), history.history['val_mae'][-1])
     test_mae.insert(len(test_mae), mean_absolute_error(y_true=y_test, y_pred=model.predict(X_test)))
-    mape.insert(len(mape), history.history['mape'][-1])
-    val_mape.insert(len(val_mape), history.history['val_mape'][-1])
-    y_pred = model.predict(X_test)
-    y_pred = scaler_y.inverse_transform(y_pred)
+    # MAPE
+    train_pred = model.predict(X_train)
+    mape.insert(len(mape), MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_train),
+                                                              y_pred=scaler_y.inverse_transform(train_pred)))
+    test_pred = model.predict(X_test)
     test_mape.insert(len(test_mape), MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_test),
-                                                                        y_pred=y_pred))
+                                                                        y_pred=scaler_y.inverse_transform(test_pred)))
 
 plt.figure(1)
 plt.scatter(np.arange(0,20), mse)
@@ -80,9 +83,8 @@ plt.title('MAE')
 
 plt.figure(3)
 plt.scatter(np.arange(0,20), mape)
-plt.scatter(np.arange(0,20), val_mape)
 plt.scatter(np.arange(0,20), test_mape)
-plt.legend(['Training set','Validation set','Testing set'])
+plt.legend(['Training set','Testing set'])
 plt.title('MAPE')
 
 plt.show()

@@ -34,7 +34,11 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         units=512,
                                         layers=4,
                                         verbose=0 )
-
+# Calculate the MAPE for the training set
+train_predictions = model.predict(X_train)
+mape = MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_train),
+                                          y_pred=scaler_y.inverse_transform(train_predictions))
+# Calculate the metrics for the testing set
 test_predictions = model.predict(X_test)
 test_mse = mean_squared_error(y_true=y_test, y_pred=test_predictions)
 test_mae = mean_absolute_error(y_true=y_test, y_pred=test_predictions)
@@ -50,8 +54,7 @@ print("     Training set:   {:5.6f}".format(history.history['mae'][-1]))
 print("     Validation set: {:5.6f}".format(history.history['val_mae'][-1]))
 print("     Testing set:    {:5.6f}".format(test_mae))
 print("Mean Absolute Percentage Error:")
-print("     Training set:   {:5.4f}".format(history.history['mape'][-1]))
-print("     Validation set: {:5.4f}".format(history.history['val_mape'][-1]))
+print("     Training set:   {:5.4f}".format(mape))
 print("     Testing set:    {:5.4f}".format(test_mape))
 
 # Make predictions
