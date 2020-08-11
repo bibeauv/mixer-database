@@ -21,10 +21,20 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+  set checkpoint = {{restart}}
+  set filename   = {{restart_filename}}
+  set frequency  = 1
+  set restart    = {{restart}}
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = 1.0
+    set kinematic viscosity            = {{viscosity}}
 end
 
 #---------------------------------------------------
@@ -39,7 +49,7 @@ end
 #--------------------------------------------------
 subsection velocity source
     set type=srf
-    set omega_z=-{{omega}}
+    set omega_z=-1
 end
 
 #--------------------------------------------------
@@ -69,7 +79,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
-    set file name            = mixer.msh
+    set file name            = ../mixer.msh
     set initial refinement   = 0
 end
 
@@ -82,10 +92,10 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -{{omega}}*y
+            set Function expression = -*y
         end
         subsection v
-            set Function expression = {{omega}}*x
+            set Function expression = x
         end
         subsection w
             set Function expression = 0
