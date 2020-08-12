@@ -87,10 +87,12 @@ for rTD in array_ratioTD[start-1:stop]:                         # Fragmentation
                     template_prm = Template(cte_prm)
                     if i == 1:
                         parameters = template_prm.render(restart = False,
-                                                            restart_filename = "restart")
+                                                         restart_filename = "restart",
+                                                         viscosity = (1/rTD)**2/Re)
                     else:
                         parameters = template_prm.render(restart = True,
-                                                            restart_filename = "restart")
+                                                         restart_filename = "restart",
+                                                         viscosity = (1/rTD)**2/Re)
                     fic_prm.close()
 
                     # Create the folder of the viscosity

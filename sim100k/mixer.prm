@@ -92,7 +92,7 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -*y
+            set Function expression = -y
         end
         subsection v
             set Function expression = x
