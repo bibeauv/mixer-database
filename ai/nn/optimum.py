@@ -23,7 +23,7 @@ data = MNN.clean_low_Re(data, 0.1, True)
 target_index = [0, 1, 2, 3, 4, 8]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 42)
 
-# Try different model
+# Compile and fit the optimum model
 history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         no_features=len(target_index),
                                         learning_rate=0.1,
@@ -34,6 +34,10 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         units=512,
                                         layers=4,
                                         verbose=0 )
+
+# Save the model
+model.save('optimum_mixer_model')
+
 # Calculate the MAPE for the training set
 train_predictions = model.predict(X_train)
 mape = MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_train),

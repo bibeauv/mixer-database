@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 
 # =================================================================================
-# Main program to find and build the model that is more accurate
+# Main program to find and build the model that has a better performance
 
 # Author: Valérie Bibeau, Polytechnique Montréal, 2020
 # =================================================================================
