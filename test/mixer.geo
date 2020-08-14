@@ -90,13 +90,13 @@ Field[1].NodesList = {1:34,37:100};
 Field[1].EdgesList = {1:49,53:100};
 
 // Threshold field defined on the attractors
-lc = 0.05;
+lc = 0.1;
 Field[2] = Threshold;
 Field[2].IField = 1;
 Field[2].LcMin = {{mesh_length}}; // char length inside DistMin
 Field[2].LcMax = lc; // char length outside DistMax
 Field[2].DistMin = 0.1;
-Field[2].DistMax = 0.3;
+Field[2].DistMax = 0.2;
 
 Background Field = 2;
 

@@ -78,12 +78,12 @@ def get_torque(mesh_length):
 # END METHODS
 # ---------------------------------------------------------------------------------
 
-mesh_length = np.linspace(0.05, 0.01, 5).tolist()
+mesh_length = np.linspace(0.1, 0.01, 10).tolist()
 
-create_data_folders(mesh_length, False)
+create_data_folders(mesh_length, True)
 
 lethe = '/home/bibeauv/soft/lethe/build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d'
-launch_gmsh_and_lethe(mesh_length, lethe, False)
+launch_gmsh_and_lethe(mesh_length, lethe, True)
 
 torque = get_torque(mesh_length)
 
