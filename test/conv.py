@@ -16,8 +16,7 @@ def create_data_folders(mesh_length, enable):
             fic_geo = open('mixer.geo','r')
             cte_geo = fic_geo.read()
             template = Template(cte_geo)
-            mesh = template.render(mesh_length = ml,
-                                min_mesh_length = ml/10)
+            mesh = template.render(mesh_length = ml)
             fic_geo.close()
 
             # Create folder
@@ -79,7 +78,7 @@ def get_torque(mesh_length):
 # END METHODS
 # ---------------------------------------------------------------------------------
 
-mesh_length = np.linspace(0.1, 0.03, 8).tolist()
+mesh_length = np.linspace(0.05, 0.01, 5).tolist()
 
 create_data_folders(mesh_length, False)
 

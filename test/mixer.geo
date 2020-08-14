@@ -10,31 +10,21 @@ SetFactory("OpenCASCADE");
 
 T = 1;
 
-ratioTD = 3;
+ratioTD = 3.0;
   D = T/ratioTD;
-ratioHT = 1;
+ratioHT = 1.0;
   H = T*ratioHT;
-ratioTC = 5;
+ratioTC = 5.0;
   C = T/ratioTC;
-ratioDW = 4;
+ratioDW = 4.0;
   W = D/ratioDW;
-ratioDW = 3;
+ratioDW = 3.0;
   W_Hub = D/ratioDW;
 
 theta = Pi/4;
 
 H_blade = W;
 E = 0.1*W;
-
-// -------------------------------------------
-// Mesh
-// -------------------------------------------
-Mesh.CharacteristicLengthMin = {{min_mesh_length}};
-Mesh.CharacteristicLengthMax = {{mesh_length}};
-Mesh.ElementOrder = 1;
-Mesh.SecondOrderLinear = 1;
-Mesh.HighOrderOptimize = 1;
-Mesh.SubdivisionAlgorithm = 2; // Hexas
 
 // -------------------------------------------
 // Cylinder (tank)
@@ -89,3 +79,28 @@ Physical Surface(2) = {30}; // Top
 Physical Surface(3) = {31}; // Bottom
 
 Physical Volume(0) = {1:100};
+
+// -------------------------------------------
+// Mesh
+// -------------------------------------------
+// Attractors field
+Field[1] = Attractor;
+Field[1].NNodesByEdge = 1000; // #Attractors on the edges
+Field[1].NodesList = {1:34,37:100};
+Field[1].EdgesList = {1:49,53:100};
+
+// Threshold field defined on the attractors
+lc = 0.05;
+Field[2] = Threshold;
+Field[2].IField = 1;
+Field[2].LcMin = {{mesh_length}}; // char length inside DistMin
+Field[2].LcMax = lc; // char length outside DistMax
+Field[2].DistMin = 0.1;
+Field[2].DistMax = 0.3;
+
+Background Field = 2;
+
+Mesh.ElementOrder = 1;
+Mesh.SecondOrderLinear = 1;
+Mesh.HighOrderOptimize = 1;
+Mesh.SubdivisionAlgorithm = 2; // Hexas

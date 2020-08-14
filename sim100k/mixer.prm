@@ -21,16 +21,6 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Restart
-#---------------------------------------------------
-subsection restart
-  set checkpoint = {{restart}}
-  set filename   = {{restart_filename}}
-  set frequency  = 1
-  set restart    = {{restart}}
-end
-
-#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties

@@ -8,4 +8,4 @@
 #SBATCH --output=%x-%j.out
 
 source $HOME/.dealii
-srun ../../lethe/build/applications/gls_navier_stokes_3d/gls_navier_stokes_3d mixer.prm
+srun launch_lethe.py
