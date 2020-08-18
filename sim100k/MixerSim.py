@@ -12,11 +12,12 @@ warnings.filterwarnings("error")
 # - generate_data_folders
 # - launch_gmsh
 # - launch_job
+# - launch_local
 # - get_torque_and_write_data
 # ______________
 # Valérie Bibeau, Polytechnique Montréal, 2020
 
-def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enable):
+def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, power_Re, multiplier_Re, enable):
     """
     Generate the folders of the geometries
 
@@ -27,13 +28,11 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enabl
         DW (list): min, max, len (geometric ratio)
         WHub (list): min, max, len (pourcentage of W for the Hub)
         E (list): min, max, len (pourcentage of W for the thickness of the blades)
-        theta (list): min, max, len
-        Re (list): min, max, len
-        start (int): Start of the fregmentation
-        stop (int): End of the fregmentation
+        theta (list): min, max, len (angle of the blades)
+        power_Re (list): min, max, len (power of Reynolds)
+        multiplier_Re (int): Multiplier of Reynolds
         enable (bool): If true, the folders are generated
     """
-
     if enable == True:
         # Create arrays for every ratios of the mixer's geometry
         array_ratioTD = np.linspace(TD[0],TD[1],TD[2])
@@ -45,12 +44,10 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enabl
         array_theta = np.linspace(theta[0],theta[1],theta[2])
 
         # Create array for the impeller velocity (omega)
-        Reynolds = np.logspace(Re[0],Re[1],Re[2])
+        Reynolds = np.logspace(power_Re[0],power_Re[1],power_Re[2])*multiplier_Re
 
         # First geometry parameter of the loop
         first = len(array_ratioTD)
-        if start > first:
-            return print('Error: Start > First... Length of the first adimensional geometry is %d' % first)
 
         # Get current path
         path = os.getcwd()
@@ -65,11 +62,20 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enabl
                 len(array_theta))
 
         # Start and stop segment for fragmentation
-        print ("Total of possible geometries folders to generate: ", total)
-        print ("Number of geometries folders generated:           ", int((stop-start+1)*total/first))
+        print ("First adimensional geometry is TD")
+        print ("Size of the first adimensional geometry =", first)
+        print ("Total of possible folders =", total)
+        print ("Set the start segment :")
+        start = int(input())
+        print ("Set the stop segment :")
+        stop = int(input())
+        print ("Number of folders =", int((stop-start+1)*total/first))
 
         start_number = (start-1)*total/first+1
         stop_number = stop*total/first
+
+        progress = 1
+        no_folders = int((stop-start+1)*total/first)
 
         number = start_number
         for rTD in array_ratioTD[start-1:stop]:
@@ -138,8 +144,8 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enabl
                                         fic_tag.write("H/T\t%f\t" % rHT)
                                         fic_tag.write("T/C\t%f\t" % rTC)
                                         fic_tag.write("D/W\t%f\t" % rDW)
-                                        fic_tag.write("D/W_Hub\t%f\t" % pWHub)
-                                        fic_tag.write("E\t%f\t" % p_thick)
+                                        fic_tag.write("D/W_Hub\t%f\t" % (pWHub*rDW))
+                                        fic_tag.write("E/W\t%f\t" % p_thick)
                                         fic_tag.write("theta\t%f\t" % t)
                                         fic_tag.write("Re\t%f\t" % Re)
                                         fic_tag.close()
@@ -150,66 +156,68 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, start, stop, enabl
 
                                     os.chdir("../")
 
+                                    pourcentage = progress/no_folders
+                                    sys.stdout.write("\rProgress: " + "{:.2%}".format(pourcentage))
+                                    sys.stdout.flush()
+                                    progress += 1
+
                                     if number == stop_number:
                                         break
                                     else:
-                                        number = number+1
+                                        number += 1
+        sys.stdout.write("\n")
 
-def launch_gmsh(gmsh, first_mixer, last_mixer, max_mesh_length, min_max, decrease, enable):
+def launch_gmsh(gmsh, max_mesh_length, min_max, decrease):
     """
-    Launch gmsh
+    Launch gmsh in the cluser
 
     Args:
-        first_mixer (int): First mixer to mesh
-        last_mixer (int): Last mixer to mesh
+        gmsh (string): Path to gmsh
         max_mesh_length (float): Maximum mesh length
         min_max (float): Fraction of maximum mesh length to set minimum mesh length
+        decrease (float): Length to decrease each time an error occur in gmsh
         enable (bool): If true, gmsh will be launched
     """
-    if enable == True:
-        this_path = os.getcwd()
-        for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
-            os.chdir(this_path + '/mixer_' + str(mixer))
-            
-            ok = False
-            mesh_length = max_mesh_length
-            while ok == False and max_mesh_length > 0:
-                os.system('cp mixer.geo mixer_copy.geo')
-                
-                fic_geo = open("mixer_copy.geo","r")
-                cte_geo = fic_geo.read()
-                template = Template(cte_geo)
-                mesh = template.render(min_mesh_length = mesh_length*min_max,
-                                       max_mesh_length = mesh_length)
-                fic_geo.close()
+    ok = False
+    mesh_length = max_mesh_length
+    while ok == False and max_mesh_length > 0:
+        os.system('cp mixer.geo mixer_copy.geo')
+        
+        fic_geo = open("mixer_copy.geo","r")
+        cte_geo = fic_geo.read()
+        template = Template(cte_geo)
+        mesh = template.render(min_mesh_length = mesh_length*min_max,
+                                max_mesh_length = mesh_length)
+        fic_geo.close()
 
-                wr_geo = open("mixer_copy.geo","w")
-                wr_geo.write(mesh)
-                wr_geo.close()
+        wr_geo = open("mixer_copy.geo","w")
+        wr_geo.write(mesh)
+        wr_geo.close()
 
-                p = Popen([gmsh + ' -3 mixer_copy.geo -o mixer.msh'], stdout=PIPE, stderr=PIPE, shell=True)
-                stdout, stderr = p.communicate()
+        p = Popen([gmsh + ' -3 mixer_copy.geo -o mixer.msh'], stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = p.communicate()
 
-                if stderr != b'':
-                    mesh_length = mesh_length - decrease
-                    os.system('rm mixer_copy.geo')
-                    print("*Mesh has been refined*")
-                else:
-                    ok = True
-                    print('---------- Generating mesh of mixer_' + str(mixer) + ' is complete ----------')
-                
-        os.chdir('../')
+        if stderr != b'':
+            mesh_length = mesh_length - decrease
+            os.system('rm mixer_copy.geo')
+            print("*Mesh has been refined*")
+        else:
+            ok = True
 
-def launch_job(first_mixer, last_mixer, enable):
+def launch_job(enable):
     """
     Launch jobs
 
     Args:
-        first_mixer (int): First mixer to launch
-        last_mixer (int): Last mixer to launch
         enable (bool): If true, the jobs will launch
     """
     if enable == True:
+        # First and last mixer
+        print('First mixer to launch job :')
+        first_mixer = int(input())
+        print('Last mixer to launch job :')
+        last_mixer = int(input())
+
         this_path = os.getcwd()
         for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
             geo_path = this_path + '/mixer_' + str(mixer)
@@ -219,7 +227,7 @@ def launch_job(first_mixer, last_mixer, enable):
         
         os.chdir('../')
 
-def launch_local(lethe, first_mixer, last_mixer, enable):
+def launch_local(lethe, enable):
     """
     Launch locally Lethe
 
@@ -230,6 +238,12 @@ def launch_local(lethe, first_mixer, last_mixer, enable):
         enable (bool): If true, launch locally Lethe
     """
     if enable == True:
+        # First and last mixer
+        print('First mixer to launch locally :')
+        first_mixer = int(input())
+        print('Last mixer to launch locally :')
+        last_mixer = int(input())
+
         this_path = os.getcwd()
         for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
             geo_path = this_path + '/mixer_' + str(mixer)
@@ -241,16 +255,20 @@ def launch_local(lethe, first_mixer, last_mixer, enable):
                 print('---------- Launching Lethe for mixer_' + str(mixer) + '-' + str(d) + ' ----------')
                 os.system(lethe + ' mixer.prm')
 
-def get_torque_and_write_data(first_mixer, last_mixer, enable):
+def get_torque_and_write_data(enable):
     """
     Get torque from simulation and write the data set
 
     Args:
-        first_mixer (int): First mixer to get data
-        last_mixer (int): Last mixer to get data
         enable (bool): If true, writing the data will be done
     """
     if enable == True:
+        # First and last mixer
+        print('First mixer to get torque and write data :')
+        first_mixer = int(input())
+        print('Last mixer to get torque and write data :')
+        last_mixer = int(input())
+
         this_path = os.getcwd()
         
         database_name = 'mixer_database_' + str(int(first_mixer)) + '-' + str(int(last_mixer))
@@ -303,3 +321,28 @@ def get_torque_and_write_data(first_mixer, last_mixer, enable):
 
         fic_data.close()
         sys.stdout.write("\n")
+
+def enable():
+    """
+    Enable the functions
+
+    Returns:
+        [bool]: If true, the function will be executed
+    """
+    YN_data = input('Do you want to generate data ? (Y/N) ')
+    if YN_data == 'Y':
+        enable_data = True
+    elif YN_data == 'N':
+        enable_data = False
+    YN_job = input('Do you want to launch jobs ? (Y/N) ')
+    if YN_job == 'Y':
+        enable_job = True
+    elif YN_job == 'N':
+        enable_job = False
+    YN_torque = input('Do you want to get torque and write data ? (Y/N) ')
+    if YN_torque == 'Y':
+        enable_torque = True
+    elif YN_torque == 'N':
+        enable_torque = False
+    
+    return enable_data, enable_job, enable_torque

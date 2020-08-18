@@ -22,21 +22,23 @@ total_mixer = stop - start + 1
 number_of_mixers = np.linspace(start,stop,total_mixer,dtype=int)
 
 for i in number_of_mixers:
-    mixer_path =  "mixer_" + str(i)
-    sim_path = path + mixer_path
-    os.chdir(sim_path)
+    geo_path = path + '/mixer_' + str(i)
+    os.chdir(geo_path)
 
-    try:
-        with open("torque.00.dat","r") as fic_torque:
-            lines = fic_torque.readlines()
-        fic_torque.close()
+    path, dirs, files = next(os.walk(geo_path))
+    for j in np.linspace(1, len(dirs), len(dirs), dtype=int):
+        os.chdir(geo_path + '/mixer_' + str(j))
+        try:
+            with open("torque.00.dat","r") as fic_torque:
+                lines = fic_torque.readlines()
+            fic_torque.close()
 
-        if len(lines) != 2:
-            raise
+            if len(lines) != 2:
+                raise
 
-        print(mixer_path + " is OK!")
+            print("mixer_" + str(i) + '-' + str(j) + " is OK!")
 
-    except:
-        print("********** " + mixer_path + " will be launched again! **********")
-        os.system('cp ../launch.sh .')
-        os.system('sbatch -J ' + mixer_path + ' launch.sh')
+        except:
+            print("********** " + "mixer_" + str(i) + '-' + str(j) + " will be launched again! **********")
+            os.system('cp ../../new_launch.sh .')
+            os.system('sbatch -J ' + "mixer_" + str(i) + '-' + str(j) + ' new_launch.sh')
