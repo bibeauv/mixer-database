@@ -17,7 +17,7 @@ warnings.filterwarnings("error")
 # ______________
 # Valérie Bibeau, Polytechnique Montréal, 2020
 
-def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, power_Re, multiplier_Re, enable):
+def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, enable):
     """
     Generate the folders of the geometries
 
@@ -44,7 +44,7 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, power_Re, multiplier_R
         array_theta = np.linspace(theta[0],theta[1],theta[2])
 
         # Create array for the impeller velocity (omega)
-        Reynolds = np.logspace(power_Re[0],power_Re[1],power_Re[2])*multiplier_Re
+        Reynolds = np.logspace(Re[0],Re[1],Re[2])
 
         # First geometry parameter of the loop
         first = len(array_ratioTD)
@@ -105,10 +105,8 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, power_Re, multiplier_R
                                     newPath = path + '/mixer_' + str(int(number))
                                     os.mkdir(newPath)
 
-                                    # Copy the file we need
+                                    # Copy the prm file
                                     os.system('cp mixer.prm ' + newPath)
-                                    os.system('cp launch_lethe.py ' + newPath)
-                                    os.system('cp launch.sh ' + newPath)
 
                                     # Go into the geometry folder
                                     os.chdir(newPath)
@@ -125,7 +123,8 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, power_Re, multiplier_R
                                         cte_prm = fic_prm.read()
                                         # Insert the parameters
                                         template_prm = Template(cte_prm)
-                                        parameters = template_prm.render(viscosity = (1/rTD)**2/Re)
+                                        parameters = template_prm.render(viscosity = (1/rTD)**2/Re,
+                                                                         initial_viscosity = (1/rTD)**2/initial_Re)
                                         fic_prm.close()
 
                                         # Create the folder for the viscosity
@@ -177,7 +176,15 @@ def launch_gmsh(gmsh, max_mesh_length, min_max, decrease):
         min_max (float): Fraction of maximum mesh length to set minimum mesh length
         decrease (float): Length to decrease each time an error occur in gmsh
         enable (bool): If true, gmsh will be launched
+    
+    Returns:
+        big_sim (bool): If true, it is a big simulation
     """
+    # Big Sim
+    big_sim = False
+
+    m = os.path.basename(os.getcwd())
+
     ok = False
     mesh_length = max_mesh_length
     while ok == False and max_mesh_length > 0:
@@ -201,8 +208,12 @@ def launch_gmsh(gmsh, max_mesh_length, min_max, decrease):
             mesh_length = mesh_length - decrease
             os.system('rm mixer_copy.geo')
             print("*Mesh has been refined*")
+            big_sim = True
         else:
             ok = True
+            print("---------- Generating mesh of " + m + " is complete ----------")
+    
+    return big_sim
 
 def launch_job(enable):
     """
@@ -223,15 +234,53 @@ def launch_job(enable):
             geo_path = this_path + '/mixer_' + str(mixer)
             os.chdir(geo_path)
 
+            os.system('cp ../launch_lethe.py .')
+            os.system('cp ../launch.sh .')
+
             os.system('sbatch -J ' + 'mixer_' + str(mixer) + ' launch.sh')
         
         os.chdir('../')
 
-def launch_local(lethe, enable):
+def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease, launch_big_or_small_sim, enable):
+    """
+    Launch jobs
+
+    Args:
+        gmsh (string): Path to gmsh
+        max_mesh_length (float): Maximum mesh length
+        min_max (float): Fraction of maximum mesh length to set minimum mesh length
+        decrease (float): Length to decrease each time an error occur in gmsh
+        launch_big_or_small_sim (bool): If true, the big simulations will launch
+        enable (bool): If true, gmsh and jobs will launch
+    """
+    if enable == True:
+        # First and last mixer
+        print('First mixer to launch job :')
+        first_mixer = int(input())
+        print('Last mixer to launch job :')
+        last_mixer = int(input())
+
+        this_path = os.getcwd()
+        for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
+            geo_path = this_path + '/mixer_' + str(mixer)
+            os.chdir(geo_path)
+
+            big_sim = launch_gmsh(gmsh, max_mesh_length, min_max, decrease)
+
+            if big_sim == launch_big_or_small_sim:
+                os.system('cp ../launch_lethe.py .')
+                os.system('cp ../launch.sh .')
+                
+                os.system('sbatch -J ' + 'mixer_' + str(mixer) + ' launch.sh')
+        
+        os.chdir('../')
+
+def launch_local(gmsh, lethe, enable):
     """
     Launch locally Lethe
 
     Args:
+        gmsh (string): Directory to gmsh
         lethe (string): Directory to Lethe
         first_mixer (int): First mixer to simulate
         last_mixer (int): Last mixer to simulate
@@ -248,6 +297,8 @@ def launch_local(lethe, enable):
         for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
             geo_path = this_path + '/mixer_' + str(mixer)
             os.chdir(geo_path)
+
+            launch_gmsh(gmsh, 0.04, 0.1, 0.01)
 
             path, dirs, files = next(os.walk(geo_path))
             for d in np.linspace(1, len(dirs), len(dirs), dtype=int):

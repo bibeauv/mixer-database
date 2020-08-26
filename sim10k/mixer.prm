@@ -21,10 +21,18 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+subsection initial conditions
+    set type                      = viscous
+    set viscosity                 = {{initial_viscosity}}
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = {{viscosity}}
+    set kinematic viscosity       = {{viscosity}}
 end
 
 #---------------------------------------------------
@@ -39,14 +47,14 @@ end
 #--------------------------------------------------
 subsection velocity source
     set type=srf
-    set omega_z=-1
+    set omega_z=-6.283185307
 end
 
 #--------------------------------------------------
 # Post-processing
 #--------------------------------------------------
 subsection post-processing
-    set output boundaries = true
+    set output boundaries = false
 end
 
 #---------------------------------------------------
@@ -82,10 +90,10 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -y
+            set Function expression = -6.283185307*y
         end
         subsection v
-            set Function expression = x
+            set Function expression = 6.283185307*x
         end
         subsection w
             set Function expression = 0
@@ -103,10 +111,10 @@ subsection boundary conditions
         set id = 3
         set type              = function
         subsection u
-            set Function expression = -y
+            set Function expression = -6.283185307*y
         end
         subsection v
-            set Function expression = x
+            set Function expression = 6.283185307*x
         end
         subsection w
             set Function expression = 0
@@ -118,7 +126,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set tolerance               = 1e-4
+  set tolerance               = 1e-5
   set max iterations          = 10
   set residual precision      = 5
   set verbosity               = verbose
@@ -130,8 +138,8 @@ subsection non-linear solver
 subsection linear solver
   set method                    = amg
   set max iters                 = 200
-  set relative residual         = 1e-3
-  set minimum residual          = 1e-11
+  set relative residual         = 0.1
+  set minimum residual          = 1e-8
   set amg preconditioner ilu fill                  = 0
   set amg preconditioner ilu absolute tolerance    = 1e-10
   set amg preconditioner ilu relative tolerance    = 1.00

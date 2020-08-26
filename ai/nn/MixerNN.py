@@ -121,21 +121,21 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     # Architecture of the Neural Network
     if architecture == 'deep':
         model = Sequential()
-        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
         l = 1
-        while l <= layers:
-            model.add(Dense(units, kernel_initializer=ini, activation='relu'))
+        while l < layers:
+            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
             l = l + 1
-        model.add(Dense(1,     kernel_initializer=ini, activation='linear'))
+        model.add(Dense(1, kernel_initializer=ini, kernel_regularizer=reg, activation='linear'))
     elif architecture == 'cascade':
         model = Sequential()
-        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
         l = 1
-        while l <= layers and units >= 2:
+        while l < layers and units >= 2:
             units = units/2
-            model.add(Dense(units, kernel_initializer=ini, activation='relu'))
+            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
             l = l + 1
-        model.add(Dense(1,     kernel_initializer=ini, activation='linear'))        
+        model.add(Dense(1, kernel_initializer=ini, kernel_regularizer=reg, activation='linear'))        
     # Compile and Fit
     model.compile(loss='mse', optimizer=opt, metrics=['mse','mae','mape'])
     model.summary()

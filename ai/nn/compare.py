@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import MixerNN as MNN
+from tensorflow import keras
 
 # ------------------------------------------------------------------------------------------
 # http://downloads.hindawi.com/journals/ijce/2012/106496.pdf
@@ -63,20 +64,11 @@ data = MNN.read_mixerdata('mixer_database_1-6250.txt')
 data = MNN.clean_low_Re(data, 0.1, True)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 8]
+target_index = [0, 1, 2, 3, 4, 5, 6, 8]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 42)
 
-# Try different model
-history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
-                                        no_features=len(target_index),
-                                        learning_rate=0.1,
-                                        l2=0.0,
-                                        epochs=2000,
-                                        val_frac=0.2,
-                                        architecture='cascade',
-                                        units=512,
-                                        layers=4,
-                                        verbose=0 )
+# Load the model
+model = keras.models.load_model('optimum_mixer_model')
 
 # Predict testing set
 y_pred = model.predict(X_test)

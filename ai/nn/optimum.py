@@ -1,6 +1,7 @@
 import MixerNN as MNN
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 
@@ -32,7 +33,7 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         val_frac=0.2,
                                         architecture='cascade',
                                         units=512,
-                                        layers=4,
+                                        layers=5,
                                         verbose=0 )
 
 # Save the model
@@ -62,16 +63,27 @@ print("     Training set:   {:5.4f}".format(mape))
 print("     Testing set:    {:5.4f}".format(test_mape))
 
 # Make predictions
-X_predict = np.array([[3, 1.4, 2.2, 3.5, 2.1, 2.6526]])
+X_predict = np.array([[3, 1.4, 2.2, 3.5, 2.1,
+                       #0.1, math.pi/4,
+                       2.6526]])
 X_predict = scaler_X.transform(X_predict)
 y_predict = model.predict(X_predict)
 Np = scaler_y.inverse_transform(y_predict)
 print("Predicted NP is: {:5.4f}".format(float(Np)))
 print("True NP is: 21.729078")
 
-X_predict = np.array([[2.5, 1.1, 4.3, 3.9, 3.1, 5.092958]])
+X_predict = np.array([[2.5, 1.1, 4.3, 3.9, 3.1,
+                       #0.1, math.pi/4,
+                       5.092958]])
 X_predict = scaler_X.transform(X_predict)
 y_predict = model.predict(X_predict)
 Np = scaler_y.inverse_transform(y_predict)
 print("Predicted NP is: {:5.4f}".format(float(Np)))
 print("True NP is: 9.423747")
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.legend(['Training', 'Validation'])
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.show()
