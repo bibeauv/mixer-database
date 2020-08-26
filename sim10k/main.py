@@ -19,7 +19,6 @@ MS.launch_gmsh_and_job(gmsh='gmsh',
                        max_mesh_length=0.04,
                        min_max=0.1,
                        decrease=0.01,
-                       launch_big_or_small_sim=True,
                        enable=enable_job)
 
 MS.get_torque_and_write_data(enable=enable_torque)

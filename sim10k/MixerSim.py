@@ -241,7 +241,7 @@ def launch_job(enable):
         
         os.chdir('../')
 
-def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease, launch_big_or_small_sim, enable):
+def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease, enable):
     """
     Launch jobs
 
@@ -267,11 +267,14 @@ def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease, launch_big_or_
 
             big_sim = launch_gmsh(gmsh, max_mesh_length, min_max, decrease)
 
-            if big_sim == launch_big_or_small_sim:
+            if big_sim == True:
                 os.system('cp ../launch_lethe.py .')
-                os.system('cp ../launch.sh .')
-                
-                os.system('sbatch -J ' + 'mixer_' + str(mixer) + ' launch.sh')
+                os.system('cp ../launch_big_sim.sh .')
+                os.system('sbatch -J ' + 'mixer_' + str(mixer) + ' launch_big_sim.sh')
+            elif big_sim == False:
+                os.system('cp ../launch_lethe.py .')
+                os.system('cp ../launch_small_sim.sh .')
+                os.system('sbatch -J ' + 'mixer_' + str(mixer) + ' launch_small_sim.sh')
         
         os.chdir('../')
 
