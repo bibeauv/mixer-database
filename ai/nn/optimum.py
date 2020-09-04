@@ -29,11 +29,12 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         no_features=len(target_index),
                                         learning_rate=0.1,
                                         l2=0.0,
-                                        epochs=2000,
+                                        epochs=5000,
                                         val_frac=0.2,
-                                        architecture='cascade',
-                                        units=512,
+                                        architecture='deep',
+                                        units=24,
                                         layers=5,
+                                        activation='tanh',
                                         verbose=0 )
 
 # Save the model

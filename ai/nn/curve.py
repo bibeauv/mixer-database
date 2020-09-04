@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 model = keras.models.load_model('optimum_mixer_model')
 
 # Set Reynolds
-Reynolds = np.logspace(0,1,50)*2
+Reynolds = np.logspace(0,2,50)
 
 # Get the data and clean it
 data = MNN.read_mixerdata('mixer_database_1-6250.txt')

@@ -64,7 +64,7 @@ data = MNN.read_mixerdata('mixer_database_1-6250.txt')
 data = MNN.clean_low_Re(data, 0.1, True)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 5, 6, 8]
+target_index = [0, 1, 2, 3, 4, 8]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 42)
 
 # Load the model

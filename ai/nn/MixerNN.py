@@ -94,7 +94,7 @@ def initial_setup(data, test_size, target_index, random_state):
                                                         random_state=random_state)
     return X_train, X_test, y_train, y_test, scaler_X, scaler_y
 
-def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac, architecture, units, layers, verbose):
+def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac, architecture, units, layers, activation, verbose):
     """Neural Network architecture/model to train the mixers
 
     Args:
@@ -121,19 +121,19 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     # Architecture of the Neural Network
     if architecture == 'deep':
         model = Sequential()
-        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation=activation))
         l = 1
         while l < layers:
-            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
+            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation=activation))
             l = l + 1
         model.add(Dense(1, kernel_initializer=ini, kernel_regularizer=reg, activation='linear'))
     elif architecture == 'cascade':
         model = Sequential()
-        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
+        model.add(Dense(units, input_dim=no_features, kernel_initializer=ini, kernel_regularizer=reg, activation=activation))
         l = 1
         while l < layers and units >= 2:
             units = units/2
-            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation='relu'))
+            model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation=activation))
             l = l + 1
         model.add(Dense(1, kernel_initializer=ini, kernel_regularizer=reg, activation='linear'))        
     # Compile and Fit

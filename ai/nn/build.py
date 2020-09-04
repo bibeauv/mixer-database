@@ -34,11 +34,10 @@ hist_l = []
 hist_u = []
 hist_lambda = []
 mse = []
-for a in np.array(['cascade']):
-    for l in np.linspace(5, 5, 1):
-        for u in np.linspace(512, 512, 1):
-            i = 1
-            for Lambda in np.logspace(-4,0,5):
+for a in np.array(['deep','cascade']):
+    for l in np.array([1,2,3,4,5]):
+        for u in np.array([6,12,18,24]):
+            for Lambda in np.array([0]):
               history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                                         no_features=len(target_index),
                                                         learning_rate=0.1,
@@ -48,10 +47,9 @@ for a in np.array(['cascade']):
                                                         architecture=a,
                                                         units=u,
                                                         layers=l,
+                                                        activation='tanh',
                                                         verbose=0 )
-              model.save('build_lambda' + str(i))
-              i += 1
-
+              
               # Trace the history
               hist_a.insert(len(hist_a), a)
               hist_l.insert(len(hist_l), l)
@@ -85,5 +83,3 @@ d = {'Architecture': hist_a,
      'Training MSE': mse}
 df = pandas.DataFrame(data=d)
 print(df)
-
-df.to_csv('build_lambda.csv')
