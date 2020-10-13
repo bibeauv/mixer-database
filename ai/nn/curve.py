@@ -32,7 +32,7 @@ X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0
 Np_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 4, 5, 5, 
+    geo = np.array([[3, 1, 3, 4, 4, 
                      #0.1, math.pi/4, 
                      Re]])
     # Scale

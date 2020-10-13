@@ -139,6 +139,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     # Compile and Fit
     model.compile(loss='mse', optimizer=opt, metrics=['mse','mae','mape'])
     model.summary()
+    #early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
     history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=verbose)
     return history, model, model.count_params()
 

@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 import MixerNN as MNN
 from tensorflow import keras
@@ -74,24 +75,39 @@ model = keras.models.load_model('optimum_mixer_model')
 y_pred = model.predict(X_test)
 y_pred = scaler_y.inverse_transform(y_pred)
 
-fic = open('corr_sim_nn.txt','w')
-fic.write('Corr\tSim\tNN\n')
-mixers = np.arange(0, len(y_pred))
-for m in mixers:
-    # NN
-    NP_nn = y_pred[m][0]
+# Set Reynolds
+Reynolds = np.logspace(0,2,50)
 
-    mixer = scaler_X.inverse_transform(X_test)
+# Predict Np with the model for different Re
+Np_vec = []
+Np0_vec = []
+for Re in Reynolds:
+    # Fixed geometry with Reynolds
+    geo = np.array([[3, 1, 3, 4, 4, 
+                     #0.1, math.pi/4, 
+                     Re]])
+    # Scale
+    X_geo = scaler_X.transform(geo)
+    # Predict
+    Np = model.predict(X_geo)
+    Np = scaler_y.inverse_transform(Np)
+    Np_vec.insert(len(Np_vec), float(Np))
     # Correlation
-    d = mixer[m][0]**-1
-    H = mixer[m][1]**1
-    b = d/(mixer[m][3])
-    Red = mixer[m][-1]
-    NP_corr = correlation(b, d, H, Red)
+    d = geo[0][0]**-1
+    H = geo[0][1]**1
+    b = d/geo[0][3]
+    Red = Re
+    Np_corr = correlation(b, d, H, Red)
+    Np0_vec.insert(len(Np0_vec), Np_corr)
 
-    # Simulation
-    NP_sim = scaler_y.inverse_transform([y_test[m]])
+# Print the curve
+Reynolds = Reynolds.tolist()
 
-    # Write
-    fic.write('%.2f\t%.2f\t%.2f\n' % (NP_corr, NP_sim, NP_nn))
-fic.close()
+plt.scatter(Reynolds, Np_vec)
+plt.scatter(Reynolds, Np0_vec)
+plt.legend(['Predictions', 'Correlation'])
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('Re')
+plt.ylabel('Np')
+plt.show()
