@@ -10,19 +10,16 @@ from sklearn.metrics import mean_absolute_error
 
 # Author: Valérie Bibeau, Polytechnique Montréal, 2020
 # =================================================================================
-# ---------- Index ----------
-# 0: T/D    1: H/T      2: T/C      3: D/W      4: D/W_hub
-# 5: E      6: theta    7: omega    8: Re       9: Np
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_1-6250.txt')
+data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
 
 # Clean the data
-data = MNN.clean_low_Re(data, 0.1, True)
+data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 8]
-X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 42)
+target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Compile and fit the optimum model
 history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
@@ -65,7 +62,7 @@ print("     Testing set:    {:5.4f}".format(test_mape))
 
 # Make predictions
 X_predict = np.array([[3, 1.4, 2.2, 3.5, 2.1,
-                       #0.1, math.pi/4,
+                       0.1, math.pi/4,
                        2.6526]])
 X_predict = scaler_X.transform(X_predict)
 y_predict = model.predict(X_predict)
@@ -74,7 +71,7 @@ print("Predicted NP is: {:5.4f}".format(float(Np)))
 print("True NP is: 21.729078")
 
 X_predict = np.array([[2.5, 1.1, 4.3, 3.9, 3.1,
-                       #0.1, math.pi/4,
+                       0.1, math.pi/4,
                        5.092958]])
 X_predict = scaler_X.transform(X_predict)
 y_predict = model.predict(X_predict)

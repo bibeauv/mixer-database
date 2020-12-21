@@ -21,7 +21,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
 # ----------------------------------------------------------------------------
-def read_mixerdata(file_name):
+def read_mixerdata(file_name, col):
     """Read the data of the mixers
 
     Args:
@@ -35,12 +35,13 @@ def read_mixerdata(file_name):
     for m in np.arange(0, len(mixer)-1, dtype=int):
         x = np.array([])
         features = mixer[m].split('\t')
-        for f in np.arange(2,21,2):
-            x = np.insert(x, len(x), float(features[f]))
-        if m == 0:
-            data = x
-        else:
-            data = np.vstack((data, x))
+        if features[-1] != '!SIMULATION FAILED!\n':
+            for f in np.arange(2,col,2):
+                x = np.insert(x, len(x), float(features[f]))
+            if m == 0:
+                data = x
+            else:
+                data = np.vstack((data, x))
     return data
 
 def clean_low_Re(data, treshold, enable):
@@ -65,21 +66,22 @@ def clean_low_Re(data, treshold, enable):
         data = np.array(data_list)
     return data
 
-def initial_setup(data, test_size, target_index, random_state):
+def initial_setup(data, test_size, target_index, output_index, random_state):
     """Set up the training and testing set
 
     Args:
         data (array): Mixers' dataset
         test_size (float): Fraction of the training set that will be tested
         target_index (array): Index of the features that will be preserved
+        output_index (int): Index of the output
         random_state (int): Random number to split the training and testing set
 
     Returns:
         X and y: Features and target values of the training and testing set
     """
-    # Separate features from target values (omega is skipped)
+    # Separate features from target values
     X = data[:,target_index]
-    y = data[:,9]
+    y = data[:,output_index]
     y = np.reshape(y, (-1, 1))
     # Normalizing features
     scaler_X = MinMaxScaler()

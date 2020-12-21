@@ -54,19 +54,15 @@ def correlation(b, d, H, Red):
     return NP0
 # ------------------------------------------------------------------------------------------
 
-# ---------- Index ----------
-# 0: T/D    1: H/T      2: T/C      3: D/W      4: D/W_hub
-# 5: E      6: theta    7: omega    8: Re       9: Np
-
 # Read the data
-data = MNN.read_mixerdata('mixer_database_1-6250.txt')
+data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
 
 # Clean the data
-data = MNN.clean_low_Re(data, 0.1, True)
+data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 8]
-X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 42)
+target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Load the model
 model = keras.models.load_model('optimum_mixer_model')
@@ -84,7 +80,7 @@ Np0_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
     geo = np.array([[3, 1, 3, 4, 4, 
-                     #0.1, math.pi/4, 
+                     0.1, math.pi/4, 
                      Re]])
     # Scale
     X_geo = scaler_X.transform(geo)
