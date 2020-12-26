@@ -1,5 +1,6 @@
 import sys
 sys.path.insert(1, '/home/bibeauv/scratch/simLHS')
+import math
 import MixerSim as MS
 
 MS.generate_data_folders(TD = [2, 5],
@@ -11,5 +12,5 @@ MS.generate_data_folders(TD = [2, 5],
                          theta = math.pi/4,
                          Re = [1, 20],
                          initial_Re = 10,
-                         ne = 10000,
+                         ne = 10,
                          enable = True)

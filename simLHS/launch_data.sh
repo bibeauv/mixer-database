@@ -8,4 +8,7 @@
 #SBATCH --output=%x-%j.out
 
 source $HOME/.dealii
-srun launch_data.py
+module load python/3
+module load scipy-stack
+source ~/ENV/bin/activate
+srun python3 launch_data.py

@@ -50,13 +50,6 @@ subsection velocity source
     set omega_z=-6.283185307
 end
 
-#--------------------------------------------------
-# Post-processing
-#--------------------------------------------------
-subsection post-processing
-    set output boundaries = false
-end
-
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
@@ -67,7 +60,6 @@ subsection forces
     set force name            = force
     set torque name           = torque
     set output precision      = 10
-    set display precision     = 5
     set calculation frequency = 1
     set output frequency      = 1
 end
@@ -77,7 +69,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
-    set file name            = ../mixer.msh
+    set file name            = mixer.msh
     set initial refinement   = 0
 end
 
