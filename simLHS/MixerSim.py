@@ -38,7 +38,6 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
     if enable == True:
         # Create LHS
         k = lhs(8, samples=ne, criterion='center')
-        print(k)
 
         # Get current path
         path = os.getcwd()
