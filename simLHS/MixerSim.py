@@ -1,5 +1,5 @@
 from jinja2 import Template
-import lhsmdu
+from pyDOE import *
 import os
 import numpy as np
 import sys
@@ -37,7 +37,8 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
     """
     if enable == True:
         # Create LHS
-        k = lhsmdu.sample(5, ne)
+        k = lhs(8, samples=ne, criterion='center')
+        print(k)
 
         # Get current path
         path = os.getcwd()
@@ -46,11 +47,14 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
         no_folders = ne
 
         for j in np.arange(ne):
-            rTD = k[0,j]*(TD[1] - TD[0]) + TD[0]
-            rHT = k[1,j]*(HT[1] - HT[0]) + HT[0]
-            rTC = k[2,j]*(TC[1] - TC[0]) + TC[0]
-            rDW = k[3,j]*(DW[1] - DW[0]) + DW[0]
-            rRe = k[4,j]*(Re[1] - Re[0]) + Re[0]
+            rTD = k[j][0]*(TD[1] - TD[0]) + TD[0]
+            rHT = k[j][1]*(HT[1] - HT[0]) + HT[0]
+            rTC = k[j][2]*(TC[1] - TC[0]) + TC[0]
+            rDW = k[j][3]*(DW[1] - DW[0]) + DW[0]
+            rWHub = k[j][4]*(WHub[1] - WHub[0]) + WHub[0]
+            rE = k[j][5]*(WHub[1] - WHub[0]) + WHub[0]
+            rtheta = k[j][6]*(WHub[1] - WHub[0]) + WHub[0]
+            rRe = k[j][7]*(Re[1] - Re[0]) + Re[0]
 
             # Open the geometry file
             fic_geo = open("mixer.geo","r")
@@ -61,9 +65,9 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
                                          ratioHT = rHT,
                                          ratioTC = rTC,
                                          ratioDW = rDW,
-                                         ratioDW_Hub = WHub*rDW,
-                                         p_thick = E,
-                                         theta = theta,
+                                         ratioDW_Hub = rWHub*rDW,
+                                         p_thick = rE,
+                                         theta = rtheta,
                                          min_mesh_length = "{{min_mesh_length}}",
                                          max_mesh_length = "{{max_mesh_length}}")
             fic_geo.close()
@@ -103,9 +107,9 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
             fic_tag.write("H/T\t%f\t" % rHT)
             fic_tag.write("T/C\t%f\t" % rTD)
             fic_tag.write("D/W\t%f\t" % rDW)
-            fic_tag.write("D/W_Hub\t%f\t" % (WHub*rDW))
-            fic_tag.write("E/W\t%f\t" % E)
-            fic_tag.write("theta\t%f\t" % theta)
+            fic_tag.write("D/W_Hub\t%f\t" % (rWHub*rDW))
+            fic_tag.write("E/W\t%f\t" % rE)
+            fic_tag.write("theta\t%f\t" % rtheta)
             fic_tag.write("Re\t%f\t" % rRe)
             fic_tag.close()
 
