@@ -2,6 +2,7 @@ from jinja2 import Template
 from pyDOE import *
 import os
 import numpy as np
+np.random.seed(0)
 import sys
 import math
 from subprocess import Popen, PIPE
