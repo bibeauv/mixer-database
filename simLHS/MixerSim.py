@@ -104,7 +104,7 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
             fic_tag = open("mixer.txt","w")
             fic_tag.write("T/D\t%f\t" % rTD)
             fic_tag.write("H/T\t%f\t" % rHT)
-            fic_tag.write("T/C\t%f\t" % rTD)
+            fic_tag.write("T/C\t%f\t" % rTC)
             fic_tag.write("D/W\t%f\t" % rDW)
             fic_tag.write("D/W_Hub\t%f\t" % (rWHub*rDW))
             fic_tag.write("E/W\t%f\t" % rE)
