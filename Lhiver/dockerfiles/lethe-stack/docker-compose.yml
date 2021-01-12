@@ -1,0 +1,11 @@
+version: "3"
+services:
+  lhiver-lethe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lhiver-lethe:latest
+    container_name: lhiver-lethe
+    hostname: ernie
+    volumes:
+    - "../../:/lhiver"
