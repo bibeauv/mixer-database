@@ -52,8 +52,8 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne, en
             rTC = k[j][2]*(TC[1] - TC[0]) + TC[0]
             rDW = k[j][3]*(DW[1] - DW[0]) + DW[0]
             rWHub = k[j][4]*(WHub[1] - WHub[0]) + WHub[0]
-            rE = k[j][5]*(WHub[1] - WHub[0]) + WHub[0]
-            rtheta = k[j][6]*(WHub[1] - WHub[0]) + WHub[0]
+            rE = k[j][5]*(E[1] - E[0]) + E[0]
+            rtheta = k[j][6]*(theta[1] - theta[0]) + theta[0]
             rRe = k[j][7]*(Re[1] - Re[0]) + Re[0]
 
             # Open the geometry file

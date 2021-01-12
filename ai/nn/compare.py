@@ -72,7 +72,7 @@ y_pred = model.predict(X_test)
 y_pred = scaler_y.inverse_transform(y_pred)
 
 # Set Reynolds
-Reynolds = np.logspace(0,2,50)
+Reynolds = np.logspace(0,2,50)*2
 
 # Predict Np with the model for different Re
 Np_vec = []
