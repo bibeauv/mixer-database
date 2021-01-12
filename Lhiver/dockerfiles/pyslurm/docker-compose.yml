@@ -1,0 +1,11 @@
+version: "3"
+services:
+  lhiver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lhiver:latest
+    container_name: lhiver
+    hostname: ernie
+    volumes:
+    - "../../:/app"
