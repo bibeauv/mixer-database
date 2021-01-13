@@ -3,17 +3,22 @@ FROM centos:7
 ARG NUMDIFF_VERSION=5.9.0
 ARG P4EST_VERSION=2.2
 ARG TRILINOS_VERSION=12-18-1
-ARG TRILINOS_BUILD_JOBS=1
+ARG TRILINOS_BUILD_JOBS=2
+ARG DEALII_VERSION=9.2.0
+ARG DEALII_BUILD_JOBS=2
+ARG LETHE_COMMIT_REF=75cf336
+ARG LETHE_BUILD_JOBS=4
 
 # OS Dependencies
 RUN set -ex \
     && yum makecache fast \
     && yum -y update \
-    && yum -y install epel-release \
+    && yum -y install epel-release centos-release-scl-rh \
     && yum -y install \
         blas64-devel \
         boost-devel \
         cmake3 \
+        devtoolset-7 \
         file \
         gcc \
         gcc-c++\
@@ -37,7 +42,7 @@ RUN set -ex \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 23756380 \
     && gpg --batch --verify /tmp/numdiff/numdiff.tar.gz.sig /tmp/numdiff/numdiff.tar.gz \
     && tar -xf /tmp/numdiff/numdiff.tar.gz -C /tmp/numdiff/ \
-    && cd "/tmp/numdiff/numdiff-$NUMDIFF_VERSION" \
+    && cd /tmp/numdiff/numdiff-$NUMDIFF_VERSION \
     && ./configure \
     && make -j `nproc` \
     && make install \
@@ -92,5 +97,50 @@ RUN set -ex \
         ../                                              \
     && make install -j $TRILINOS_BUILD_JOBS \
     && rm -rf /tmp/trilinos
+
+# deal.ii
+RUN set -ex \
+    && mkdir /tmp/dealii \
+    && wget -qP /tmp/dealii "https://github.com/dealii/dealii/releases/download/v$DEALII_VERSION/dealii-$DEALII_VERSION.tar.gz" \
+    && wget -qP /tmp/dealii "https://github.com/dealii/dealii/releases/download/v$DEALII_VERSION/dealii-$DEALII_VERSION.tar.gz.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 6D1B8D15 \
+    && gpg --batch --verify /tmp/dealii/dealii-$DEALII_VERSION.tar.gz.asc /tmp/dealii/dealii-$DEALII_VERSION.tar.gz \
+    && tar -xf /tmp/dealii/dealii-$DEALII_VERSION.tar.gz -C /tmp/dealii/ \
+    && mkdir /tmp/dealii/dealii-$DEALII_VERSION/build \
+    && cd /tmp/dealii/dealii-$DEALII_VERSION/build \
+    && source scl_source enable devtoolset-7 \
+    && source /etc/profile.d/modules.sh \
+    && module load mpi/openmpi3-x86_64 \
+    && cmake3                                    \
+        -DDEAL_II_WITH_MPI=ON                    \
+        -DDEAL_II_WITH_TRILINOS=ON               \
+        -DTRILINOS_DIR=/opt/trilinos             \
+        -DDEAL_II_WITH_P4EST=ON                  \
+        -DP4EST_DIR=/opt/p4est                   \
+        -DCMAKE_VERBOSE_MAKEFILE=OFF             \
+        -DCMAKE_BUILD_TYPE=Release               \
+        -DCMAKE_INSTALL_PREFIX:PATH=/opt/dealii  \
+        ../                                      \
+    && make install -j $DEALII_BUILD_JOBS \
+    && echo "export DEAL_II_DIR=/opt/dealii" >> ~/.bashrc \
+    && rm -rf "${GNUPGHOME}" /tmp/dealii
+
+# Lethe
+RUN set -ex \
+    && git clone https://github.com/lethe-cfd/lethe /tmp/lethe \
+    && git --git-dir=/tmp/lethe/.git checkout ${LETHE_COMMIT_REF} \
+    && mkdir /tmp/lethe/build \
+    && cd /tmp/lethe/build \
+    && source scl_source enable devtoolset-7 \
+    && cmake3                                    \
+        -DDEAL_II_DIR=/opt/dealii                \
+        -DCMAKE_VERBOSE_MAKEFILE=OFF             \
+        -DCMAKE_BUILD_TYPE=Release               \
+        -DCMAKE_INSTALL_PREFIX:PATH=/opt/lethe   \
+        ../                                      \
+    && make install -j $LETHE_BUILD_JOBS \
+    && echo 'export PATH=$PATH:/opt/lethe/bin' >> ~/.bashrc \
+    && rm -rf /tmp/lethe
 
 CMD bash
