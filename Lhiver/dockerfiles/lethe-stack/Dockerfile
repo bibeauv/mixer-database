@@ -43,11 +43,12 @@ RUN set -ex \
     && gpg --batch --verify /tmp/numdiff/numdiff.tar.gz.sig /tmp/numdiff/numdiff.tar.gz \
     && tar -xf /tmp/numdiff/numdiff.tar.gz -C /tmp/numdiff/ \
     && cd /tmp/numdiff/numdiff-$NUMDIFF_VERSION \
-    && ./configure \
+    && ./configure --prefix=/opt/numdiff \
     && make -j `nproc` \
     && make install \
     && rm -rf "${GNUPGHOME}" /tmp/numdiff \
-    && numdiff --version
+    && echo 'export PATH=$PATH:/opt/numdiff/bin' >> ~/.bashrc \
+    && /opt/numdiff/bin/numdiff --version
 
 # p4est
 RUN set -ex \
@@ -113,11 +114,13 @@ RUN set -ex \
     && source /etc/profile.d/modules.sh \
     && module load mpi/openmpi3-x86_64 \
     && cmake3                                    \
+        -DDEAL_II_NUMDIFF_DIR=/opt/numdiff       \
         -DDEAL_II_WITH_MPI=ON                    \
         -DDEAL_II_WITH_TRILINOS=ON               \
         -DTRILINOS_DIR=/opt/trilinos             \
         -DDEAL_II_WITH_P4EST=ON                  \
         -DP4EST_DIR=/opt/p4est                   \
+        -DDEAL_II_COMPONENT_EXAMPLES=NO          \
         -DCMAKE_VERBOSE_MAKEFILE=OFF             \
         -DCMAKE_BUILD_TYPE=Release               \
         -DCMAKE_INSTALL_PREFIX:PATH=/opt/dealii  \
@@ -134,6 +137,7 @@ RUN set -ex \
     && cd /tmp/lethe/build \
     && source scl_source enable devtoolset-7 \
     && cmake3                                    \
+        -DNUMDIFF_DIR=/opt/numdiff               \
         -DDEAL_II_DIR=/opt/dealii                \
         -DCMAKE_VERBOSE_MAKEFILE=OFF             \
         -DCMAKE_BUILD_TYPE=Release               \
