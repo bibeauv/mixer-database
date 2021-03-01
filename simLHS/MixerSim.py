@@ -252,7 +252,7 @@ def launch_local(gmsh, lethe, enable):
                 print('---------- Launching Lethe for mixer_' + str(mixer) + '-' + str(d) + ' ----------')
                 os.system(lethe + ' mixer.prm')
 
-def get_torque_and_write_data(enable):
+def get_torque_and_write_data(enable, first_mixer, last_mixer):
     """
     Get torque from simulation and write the data set
 
@@ -260,12 +260,6 @@ def get_torque_and_write_data(enable):
         enable (bool): If true, writing the data will be done
     """
     if enable == True:
-        # First and last mixer
-        print('First mixer to get torque and write data :')
-        first_mixer = int(input())
-        print('Last mixer to get torque and write data :')
-        last_mixer = int(input())
-
         this_path = os.getcwd()
         
         database_name = 'mixer_database_' + str(int(first_mixer)) + '-' + str(int(last_mixer))
@@ -278,41 +272,38 @@ def get_torque_and_write_data(enable):
             geo_path = this_path + '/mixer_' + str(mixer)
             os.chdir(geo_path)
 
-            path, dirs, files = next(os.walk(geo_path))
-            for d in np.linspace(1, len(dirs), len(dirs), dtype=int):
-                os.chdir(geo_path + '/mixer_' + str(d))
-                fic_data.write('mixer_' + str(mixer) + '-' + str(d) + '\t')
+            fic_data.write('mixer_' + str(mixer) + '\t')
 
-                fic_tag = open("mixer.txt","r")
-                geo_info = fic_tag.read()
-                fic_data.write(geo_info)
-                geo_info = geo_info.split("\t")
-                D = geo_info[1] # Impeller diameter
-                fic_tag.close()
+            fic_tag = open("mixer.txt","r")
+            geo_info = fic_tag.read()
+            fic_data.write(geo_info)
+            geo_info = geo_info.split("\t")
+            D = geo_info[1] # Impeller diameter
+            fic_tag.close()
 
-                try:
-                    with open("torque.00.dat","r") as fic_torque:
-                        lines = fic_torque.readlines()
-                    fic_torque.close()
-                
-                    get_torque = lines[-1]
-                    get_torque = get_torque.split(" ")
-                    torque = get_torque[3]
+            try:
+                with open("torque.00.dat","r") as fic_torque:
+                    lines = fic_torque.readlines()
+                fic_torque.close()
+            
+                get_torque = lines[-1]
+                get_torque = get_torque.split(" ")
+                torque = get_torque[3]
 
-                    # Calculate power number
-                    D = 1/float(D)
-                    torque = float(torque)
-                    Np = 2*math.pi*torque/D/D/D/D/D
+                # Calculate power number
+                D = 1/float(D)
+                torque = float(torque)
+                Np = 2*math.pi*torque/D/D/D/D/D
 
-                    fic_data.write("Np\t%f\n" % Np)
+                fic_data.write("Np\t%f\n" % Np)
 
-                except:
-                    fic_data.write("!SIMULATION FAILED!\n")
-                
-                pourcentage = progress/(((last_mixer-first_mixer)+1)*len(dirs))
-                sys.stdout.write("\rProgress: " + "{:.2%}".format(pourcentage))
-                sys.stdout.flush()
-                progress += 1
+            except:
+                fic_data.write("!SIMULATION FAILED!\n")
+            
+            pourcentage = progress/((last_mixer-first_mixer)+1)
+            sys.stdout.write("\rProgress: " + "{:.2%}".format(pourcentage))
+            sys.stdout.flush()
+            progress += 1
 
         os.chdir('../../')
 
