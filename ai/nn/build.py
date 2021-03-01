@@ -36,16 +36,16 @@ for a in np.array(['deep','cascade']):
         for u in np.array([6,12,18,24]):
             for Lambda in np.array([0]):
               history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
-                                                        no_features=len(target_index),
-                                                        learning_rate=0.1,
-                                                        l2=Lambda,
-                                                        epochs=500,
-                                                        val_frac=0.2,
-                                                        architecture=a,
-                                                        units=u,
-                                                        layers=l,
-                                                        activation='tanh',
-                                                        verbose=0 )
+                                                      no_features=len(target_index),
+                                                      learning_rate=0.1,
+                                                      l2=Lambda,
+                                                      epochs=500,
+                                                      val_frac=0.2,
+                                                      architecture=a,
+                                                      units=u,
+                                                      layers=l,
+                                                      activation='tanh',
+                                                      verbose=0 )
               
               # Trace the history
               hist_a.insert(len(hist_a), a)

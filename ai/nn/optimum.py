@@ -29,7 +29,7 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         epochs=5000,
                                         val_frac=0.2,
                                         architecture='deep',
-                                        units=24,
+                                        units=8,
                                         layers=5,
                                         activation='tanh',
                                         verbose=0 )

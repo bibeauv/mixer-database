@@ -115,7 +115,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
         history: History of the algorithme
     """
     # Optimizer
-    opt = keras.optimizers.Adagrad(learning_rate=learning_rate)
+    opt = keras.optimizers.SGD(learning_rate=learning_rate)
     # Initializer
     ini = keras.initializers.GlorotUniform()
     # Regularizer
@@ -138,11 +138,15 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
             model.add(Dense(units, kernel_initializer=ini, kernel_regularizer=reg, activation=activation))
             l = l + 1
         model.add(Dense(1, kernel_initializer=ini, kernel_regularizer=reg, activation='linear'))        
-    # Compile and Fit
+    # Compile
     model.compile(loss='mse', optimizer=opt, metrics=['mse','mae','mape'])
     model.summary()
+    # TensorBoard
+    log_dir = 'logs/fit/'
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     #early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
-    history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=verbose)
+    # Fit
+    history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=verbose, callbacks=[tensorboard_callback])
     return history, model, model.count_params()
 
 def mean_absolute_percentage_error(y_true, y_pred):
