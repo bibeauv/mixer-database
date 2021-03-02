@@ -18,7 +18,7 @@ model = keras.models.load_model('optimum_mixer_model')
 Reynolds = np.logspace(0,2,50)
 
 # Get the data and clean it
-data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
 data = MNN.clean_low_Re(data, 0.1, False)
 
 # Get the scaler
@@ -29,8 +29,8 @@ X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0
 Np_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 3, 4, 4, 
-                     0.1, math.pi/4, 
+    geo = np.array([[3, 1, 4, 5, 5, 
+                     0.1, 0, 
                      Re]])
     # Scale
     X_geo = scaler_X.transform(geo)

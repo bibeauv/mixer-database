@@ -55,7 +55,7 @@ def correlation(b, d, H, Red):
 # ------------------------------------------------------------------------------------------
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)

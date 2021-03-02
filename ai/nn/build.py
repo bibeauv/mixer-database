@@ -12,10 +12,10 @@ import pandas
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
 
 # Clean the data
-data = MNN.clean_low_Re(data, 0.1, True)
+data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
 target_index = [0, 1, 2, 3, 4, 5, 6, 7]

@@ -12,7 +12,7 @@ from sklearn.metrics import mean_absolute_error
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_1-1024.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
@@ -29,7 +29,7 @@ history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         epochs=5000,
                                         val_frac=0.2,
                                         architecture='deep',
-                                        units=8,
+                                        units=18,
                                         layers=5,
                                         activation='tanh',
                                         verbose=0 )
