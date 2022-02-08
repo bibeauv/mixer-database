@@ -120,29 +120,29 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne):
 
     sys.stdout.write("\n")
 
-def launch_gmsh(gmsh, max_mesh_length, min_max, decrease):
+def launch_gmsh(gmsh, min_mesh_length, min_max, decrease):
     """
     Launch gmsh in the cluser
 
     Args:
         gmsh (string): Path to gmsh
-        max_mesh_length (float): Maximum mesh length
-        min_max (float): Fraction of maximum mesh length to set minimum mesh length
+        min_mesh_length (float): Minimum mesh length
+        min_max (float): Multiplication of minimum mesh length to set maximum mesh length
         decrease (float): Length to decrease each time an error occur in gmsh
     """
 
     m = os.path.basename(os.getcwd())
 
     ok = False
-    mesh_length = max_mesh_length
-    while ok == False and max_mesh_length > 0:
+    max_mesh_length = min_mesh_length*min_max
+    while ok == False and min_mesh_length > 0:
         os.system('cp mixer.geo mixer_copy.geo')
         
         fic_geo = open("mixer_copy.geo","r")
         cte_geo = fic_geo.read()
         template = Template(cte_geo)
-        mesh = template.render(min_mesh_length = mesh_length*min_max,
-                               max_mesh_length = mesh_length)
+        mesh = template.render(min_mesh_length = min_mesh_length,
+                               max_mesh_length = max_mesh_length)
         fic_geo.close()
 
         wr_geo = open("mixer_copy.geo","w")
@@ -153,7 +153,7 @@ def launch_gmsh(gmsh, max_mesh_length, min_max, decrease):
         stdout, stderr = p.communicate()
 
         if stderr != b'':
-            mesh_length = mesh_length - decrease
+            min_mesh_length = min_mesh_length - decrease
             os.system('rm mixer_copy.geo')
             print("*Mesh has been refined*")
         else:
@@ -182,7 +182,7 @@ def launch_job():
     
     os.chdir('../')
 
-def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease):
+def launch_gmsh_and_job(gmsh, min_mesh_length, min_max, decrease):
     """
     Launch jobs
 
@@ -204,7 +204,7 @@ def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease):
         geo_path = this_path + '/mixer_' + str(mixer)
         os.chdir(geo_path)
 
-        launch_gmsh(gmsh, max_mesh_length, min_max, decrease)
+        launch_gmsh(gmsh, min_mesh_length, min_max, decrease)
 
         os.system('cp ../launch_lethe.py .')
         os.system('cp ../launch_lethe.sh .')
@@ -212,7 +212,7 @@ def launch_gmsh_and_job(gmsh, max_mesh_length, min_max, decrease):
     
     os.chdir('../')
 
-def launch_local(gmsh, lethe, max_mesh_length, min_max, decrease):
+def launch_local(gmsh, lethe, min_mesh_length, min_max, decrease):
     """
     Launch locally Lethe
 
@@ -233,7 +233,7 @@ def launch_local(gmsh, lethe, max_mesh_length, min_max, decrease):
         geo_path = this_path + '/mixer_' + str(mixer)
         os.chdir(geo_path)
 
-        launch_gmsh(gmsh, max_mesh_length, min_max, decrease)
+        launch_gmsh(gmsh, min_mesh_length, min_max, decrease)
 
         print('---------- Launching Lethe for mixer_' + str(mixer) + ' ----------')
         os.system(lethe + ' mixer.prm')
