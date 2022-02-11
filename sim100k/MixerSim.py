@@ -60,14 +60,14 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne):
         # Insert the geometry
         template = Template(cte_geo)
         geometries = template.render(ratioTD = rTD,
-                                        ratioHT = rHT,
-                                        ratioTC = rTC,
-                                        ratioDW = rDW,
-                                        ratioDW_Hub = rWHub*rDW,
-                                        p_thick = rE,
-                                        theta = rtheta,
-                                        min_mesh_length = "{{min_mesh_length}}",
-                                        max_mesh_length = "{{max_mesh_length}}")
+                                     ratioHT = rHT,
+                                     ratioTC = rTC,
+                                     ratioDW = rDW,
+                                     ratioDW_Hub = rWHub*rDW,
+                                     p_thick = rE,
+                                     theta = rtheta,
+                                     min_mesh_length = "{{min_mesh_length}}",
+                                     max_mesh_length = "{{max_mesh_length}}")
         fic_geo.close()
 
         # Open the parameter file
@@ -75,8 +75,12 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne):
         cte_prm = fic_prm.read()
         # Insert the parameters
         template_prm = Template(cte_prm)
-        parameters = template_prm.render(viscosity = (1/rTD)**2/rRe,
-                                            initial_viscosity = (1/rTD)**2/initial_Re)
+        if rRe > initial_Re:
+            parameters = template_prm.render(viscosity = (1/rTD)**2/rRe,
+                                             initial_viscosity = (1/rTD)**2/initial_Re)
+        else:
+            parameters = template_prm.render(viscosity = (1/rTD)**2/rRe,
+                                             initial_viscosity = (1/rTD)**2/rRe)
         fic_prm.close()
 
         # Create the folder of the geometry

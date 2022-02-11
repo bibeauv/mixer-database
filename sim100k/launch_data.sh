@@ -7,8 +7,8 @@
 #SBATCH --mail-user=valerie.bibeau@hotmail.ca
 #SBATCH --output=%x-%j.out
 
-source $HOME/.dealii
+source $SCRATCH/.dealii
 module load python/3
 module load scipy-stack
-source ~/ENV/bin/activate
+source $SCRATCH/ENV/bin/activate
 srun python3 launch_data.py
