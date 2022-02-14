@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, '/home/bibeauv/scratch/simLHS')
+sys.path.insert(1, '/home/bibeauv/scratch/sim100k')
 import math
 import MixerSim as MS
 
