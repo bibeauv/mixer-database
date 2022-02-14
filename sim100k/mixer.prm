@@ -74,6 +74,7 @@ subsection mesh
     set type                 = gmsh
     set file name            = mixer.msh
     set initial refinement   = 0
+    set simplex              = true
 end
 
 # --------------------------------------------------
