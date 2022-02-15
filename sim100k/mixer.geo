@@ -21,7 +21,7 @@ ratioDW = {{ratioDW}};
 ratioDW = {{ratioDW_Hub}};
   W_Hub = D/ratioDW;
 
-theta = {{theta}};
+theta = -{{theta}};
 
 H_blade = W;
 E = {{p_thick}}*W;
@@ -50,13 +50,13 @@ Rotate { { 1,0,0 }, {0, 0, C+H_blade/2}, -theta } {Volume{4};}
 // -------------------------------------------
 // Blade 2
 // -------------------------------------------
-Box (5) = { 0, -D/2, C, E, D/2, H_blade };
+Box (5) = { -E/2, -D/2, C, E, D/2, H_blade };
 Rotate { { 0,1,0 }, {0, 0, C+H_blade/2}, theta } {Volume{5};}
 
 // -------------------------------------------
 // Blade 3
 // -------------------------------------------
-Box (6) = { 0, 0, C, E, D/2, H_blade };
+Box (6) = { -E/2, 0, C, E, D/2, H_blade };
 Rotate { { 0,1,0 }, {0, 0, C+H_blade/2}, -theta } {Volume{6};}
 
 // -------------------------------------------
@@ -74,7 +74,7 @@ BooleanDifference{ Volume{1}; Delete; }{ Volume{2:7}; Delete; }
 // Attractor field
 // -------------------------------------------
 Field[1] = Attractor;
-Field[1].EdgesList = {6,14:17,22,26,30,31,36,40,44:49,53:93};
+Field[1].EdgesList = {14:17,22,26,30,31,36,40,44:49,53:200};
 Field[2] = Threshold;
 Field[2].IField = 1;
 Field[2].LcMin = {{min_mesh_length}};

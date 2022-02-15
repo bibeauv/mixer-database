@@ -124,7 +124,7 @@ def generate_data_folders(TD, HT, TC, DW, WHub, E, theta, Re, initial_Re, ne):
 
     sys.stdout.write("\n")
 
-def launch_gmsh(gmsh, min_mesh_length, min_max, decrease):
+def launch_gmsh(gmsh, min_mesh_length, min_max):
     """
     Launch gmsh in the cluser
 
@@ -135,34 +135,21 @@ def launch_gmsh(gmsh, min_mesh_length, min_max, decrease):
         decrease (float): Length to decrease each time an error occur in gmsh
     """
 
-    m = os.path.basename(os.getcwd())
-
-    ok = False
     max_mesh_length = min_mesh_length*min_max
-    while ok == False and min_mesh_length > 0:
-        os.system('cp mixer.geo mixer_copy.geo')
-        
-        fic_geo = open("mixer_copy.geo","r")
-        cte_geo = fic_geo.read()
-        template = Template(cte_geo)
-        mesh = template.render(min_mesh_length = min_mesh_length,
-                               max_mesh_length = max_mesh_length)
-        fic_geo.close()
+    os.system('cp mixer.geo mixer_copy.geo')
+    
+    fic_geo = open("mixer_copy.geo","r")
+    cte_geo = fic_geo.read()
+    template = Template(cte_geo)
+    mesh = template.render(min_mesh_length = min_mesh_length,
+                           max_mesh_length = max_mesh_length)
+    fic_geo.close()
 
-        wr_geo = open("mixer_copy.geo","w")
-        wr_geo.write(mesh)
-        wr_geo.close()
+    wr_geo = open("mixer_copy.geo","w")
+    wr_geo.write(mesh)
+    wr_geo.close()
 
-        p = Popen([gmsh + ' -3 mixer_copy.geo -o mixer.msh'], stdout=PIPE, stderr=PIPE, shell=True)
-        stdout, stderr = p.communicate()
-
-        if stderr != b'':
-            min_mesh_length = min_mesh_length - decrease
-            os.system('rm mixer_copy.geo')
-            print("*Mesh has been refined*")
-        else:
-            ok = True
-            print("---------- Generating mesh of " + m + " is complete ----------")
+    os.system(gmsh + ' -3 mixer_copy.geo -o mixer.msh')
 
 def launch_job():
     """
