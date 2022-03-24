@@ -13,8 +13,15 @@ this_path = os.getcwd() + '/..'
 for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dtype=int):
     geo_path = this_path + '/mixer_' + str(mixer)
     os.chdir(geo_path)
-    with open(glob.glob('mixer_' + str(mixer) + '-*.out')[-1]) as f:
+    
+    files_out = glob.glob('mixer_' + str(mixer) + '-*.out')
+    id_files_out = [int(file.split('-')[1].split('.')[0]) for file in files_out]
+    id_files_out.sort()
+    last_file_out = id_files_out[-1]
+    
+    with open('mixer_' + str(mixer) + '-' + str(last_file_out) + '.out') as f:
         output = f.readlines()
+    
     if not os.path.isfile('torque.00.dat') and output[-2] == 'Aborting!\n' and output[-3] != 'std::exception\n':
         os.system('cp ../utils/mixer.geo .')
         
@@ -22,6 +29,10 @@ for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dt
         ratios = tag.read()
         ratio = ratios.split('\t')
         tag.close()
+        
+        last = open("last_theta.txt","w")
+        last.write(str(float(ratio[13])))
+        last.close()
 
         tag = open("mixer.txt","w")
         ratio[13] = '0.0'
