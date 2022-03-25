@@ -55,13 +55,13 @@ def correlation(b, d, H, Red):
 # ------------------------------------------------------------------------------------------
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Load the model
@@ -79,7 +79,7 @@ Np_vec = []
 Np0_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 3, 4, 4, 
+    geo = np.array([[3, 1, 3, 4, #4, 
                      0.1, math.pi/4, 
                      Re]])
     # Scale

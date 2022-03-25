@@ -15,21 +15,21 @@ import matplotlib.pyplot as plt
 model = keras.models.load_model('optimum_mixer_model')
 
 # Set Reynolds
-Reynolds = np.logspace(0,2,50)
+Reynolds = np.logspace(0,2)*2
 
 # Get the data and clean it
-data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
 data = MNN.clean_low_Re(data, 0.1, False)
 
 # Get the scaler
-target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Predict Np with the model for different Re
 Np_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 4, 5, 5, 
+    geo = np.array([[3, 1, 4, 5, #5, 
                      0.1, 0, 
                      Re]])
     # Scale

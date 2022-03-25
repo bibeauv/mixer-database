@@ -12,13 +12,13 @@ import pandas
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Try different model
@@ -31,15 +31,15 @@ hist_l = []
 hist_u = []
 hist_lambda = []
 mse = []
-for a in np.array(['deep','cascade']):
+for a in np.array(['deep']):
     for l in np.array([1,2,3,4,5]):
         for u in np.array([6,12,18,24]):
-            for Lambda in np.array([0]):
+            for Lambda in np.array([1e-10]):
               history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                                       no_features=len(target_index),
                                                       learning_rate=0.1,
                                                       l2=Lambda,
-                                                      epochs=500,
+                                                      epochs=1000,
                                                       val_frac=0.2,
                                                       architecture=a,
                                                       units=u,

@@ -12,25 +12,25 @@ from sklearn.metrics import mean_absolute_error
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-9999.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
 
 # Set the features and the target values for the training and testing set
-target_index = [0, 1, 2, 3, 4, 5, 6, 7]
+target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Compile and fit the optimum model
 history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         no_features=len(target_index),
                                         learning_rate=0.1,
-                                        l2=0.0,
-                                        epochs=5000,
+                                        l2=1e-10,
+                                        epochs=10000,
                                         val_frac=0.2,
                                         architecture='deep',
-                                        units=18,
-                                        layers=5,
+                                        units=24,
+                                        layers=4,
                                         activation='tanh',
                                         verbose=0 )
 
@@ -60,27 +60,11 @@ print("Mean Absolute Percentage Error:")
 print("     Training set:   {:5.4f}".format(mape))
 print("     Testing set:    {:5.4f}".format(test_mape))
 
-# Make predictions
-X_predict = np.array([[3, 1.4, 2.2, 3.5, 2.1,
-                       0.1, math.pi/4,
-                       2.6526]])
-X_predict = scaler_X.transform(X_predict)
-y_predict = model.predict(X_predict)
-Np = scaler_y.inverse_transform(y_predict)
-print("Predicted NP is: {:5.4f}".format(float(Np)))
-print("True NP is: 21.729078")
-
-X_predict = np.array([[2.5, 1.1, 4.3, 3.9, 3.1,
-                       0.1, math.pi/4,
-                       5.092958]])
-X_predict = scaler_X.transform(X_predict)
-y_predict = model.predict(X_predict)
-Np = scaler_y.inverse_transform(y_predict)
-print("Predicted NP is: {:5.4f}".format(float(Np)))
-print("True NP is: 9.423747")
-
+# Check evolution of training
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
+plt.xscale('log')
+plt.yscale('log')
 plt.legend(['Training', 'Validation'])
 plt.xlabel('Epochs')
 plt.ylabel('Loss')

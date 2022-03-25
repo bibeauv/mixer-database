@@ -114,6 +114,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     Returns:
         history: History of the algorithme
     """
+    keras.backend.clear_session()
     # Optimizer
     opt = keras.optimizers.Adagrad(learning_rate=learning_rate)
     # Initializer

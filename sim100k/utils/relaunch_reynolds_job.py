@@ -45,7 +45,7 @@ for mixer in np.linspace(first_mixer, last_mixer, (last_mixer-first_mixer)+1, dt
         last.close()
 
         tag = open("mixer.txt","w")
-        ratio[15] = '50.0'
+        ratio[15] = '50.000000'
         ratios = "\t".join(ratio)
         tag.write(ratios)
         tag.close()
