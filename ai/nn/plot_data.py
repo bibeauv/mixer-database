@@ -1,7 +1,6 @@
 import MixerNN as MNN
 import matplotlib.pyplot as plt
 import numpy as np
-import math
 from tensorflow import keras
 
 # Read the data

@@ -8,7 +8,7 @@
 # Arrays for data
 import numpy as np
 # To normalize data
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import train_test_split
 # NN
 import numpy as np
@@ -32,7 +32,7 @@ def read_mixerdata(file_name, col):
     """
     dataset = open(file_name,'r')
     mixer = dataset.readlines()
-    for m in np.arange(0, len(mixer)-1, dtype=int):
+    for m in np.arange(0, len(mixer), dtype=int):
         x = np.array([])
         features = mixer[m].split('\t')
         if features[-1] != '!SIMULATION FAILED!\n':
@@ -84,8 +84,8 @@ def initial_setup(data, test_size, target_index, output_index, random_state):
     y = data[:,output_index]
     y = np.reshape(y, (-1, 1))
     # Normalizing features
-    scaler_X = MinMaxScaler()
-    scaler_y = MinMaxScaler()
+    scaler_X = RobustScaler()
+    scaler_y = RobustScaler()
     scaler_X.fit(X)
     scaler_y.fit(y)
     Xscale = scaler_X.transform(X)
@@ -147,7 +147,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     #tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     #early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
     # Fit
-    history = model.fit(X_train, y_train, epochs=epochs, validation_split=val_frac, verbose=verbose)
+    history = model.fit(X_train, y_train, batch_size=200, epochs=epochs, validation_split=val_frac, verbose=verbose)
     return history, model, model.count_params()
 
 def mean_absolute_percentage_error(y_true, y_pred):

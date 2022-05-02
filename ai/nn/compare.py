@@ -56,6 +56,7 @@ def correlation(b, d, H, Red):
 
 # Read the data
 data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
+data_lethe = MNN.read_mixerdata('mixer_database_0-20.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
@@ -72,14 +73,14 @@ y_pred = model.predict(X_test)
 y_pred = scaler_y.inverse_transform(y_pred)
 
 # Set Reynolds
-Reynolds = np.logspace(0,2,50)*2
+Reynolds = np.logspace(0,2,50)
 
 # Predict Np with the model for different Re
 Np_vec = []
 Np0_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 3, 4, #4, 
+    geo = np.array([[3, 1, 4, 5,
                      0.1, math.pi/4, 
                      Re]])
     # Scale
@@ -96,12 +97,17 @@ for Re in Reynolds:
     Np_corr = correlation(b, d, H, Red)
     Np0_vec.insert(len(Np0_vec), Np_corr)
 
+# Get data from Lethe
+Re_lethe = data_lethe[:,-2]
+Np_lethe = data_lethe[:,-1]
+
 # Print the curve
 Reynolds = Reynolds.tolist()
 
-plt.scatter(Reynolds, Np_vec)
-plt.scatter(Reynolds, Np0_vec)
-plt.legend(['Predictions', 'Correlation'])
+plt.plot(Reynolds, Np_vec, '-r')
+plt.plot(Reynolds, Np0_vec, '--k')
+plt.scatter(Re_lethe, Np_lethe)
+plt.legend(['Predictions', 'Correlation', 'Lethe'])
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel('Re')
