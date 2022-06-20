@@ -33,11 +33,11 @@ hist_lambda = []
 mse = []
 for a in np.array(['deep']):
     for l in np.array([2,3,4,5]):
-        for u in np.array([6,12,18,24]):
+        for u in np.array([4,8,16,24,32,40]):
             for Lambda in np.array([1e-10]):
               history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                                       no_features=len(target_index),
-                                                      learning_rate=0.1,
+                                                      batch_size=100,
                                                       l2=Lambda,
                                                       epochs=1000,
                                                       val_frac=0.2,

@@ -23,7 +23,7 @@ print(mape)
 
 a = plt.axes(aspect='equal')
 plt.scatter(scaler_y.inverse_transform(y_test), scaler_y.inverse_transform(test_predictions))
-lims = [0,80]
+lims = [0,100]
 plt.plot(lims,lims)
 plt.xlabel('True Values [Np]')
 plt.ylabel('Predictions [Np]')

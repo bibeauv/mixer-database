@@ -8,7 +8,7 @@
 # Arrays for data
 import numpy as np
 # To normalize data
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 # NN
 import numpy as np
@@ -18,7 +18,6 @@ tensorflow.random.set_seed(2)   # for reproducibility
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
 
 # ----------------------------------------------------------------------------
 def read_mixerdata(file_name, col):
@@ -84,8 +83,8 @@ def initial_setup(data, test_size, target_index, output_index, random_state):
     y = data[:,output_index]
     y = np.reshape(y, (-1, 1))
     # Normalizing features
-    scaler_X = RobustScaler()
-    scaler_y = RobustScaler()
+    scaler_X = MinMaxScaler()
+    scaler_y = MinMaxScaler()
     scaler_X.fit(X)
     scaler_y.fit(y)
     Xscale = scaler_X.transform(X)
@@ -96,13 +95,13 @@ def initial_setup(data, test_size, target_index, output_index, random_state):
                                                         random_state=random_state)
     return X_train, X_test, y_train, y_test, scaler_X, scaler_y
 
-def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac, architecture, units, layers, activation, verbose):
+def fit_model(X_train, y_train, no_features, batch_size, l2, epochs, val_frac, architecture, units, layers, activation, verbose):
     """Neural Network architecture/model to train the mixers
 
     Args:
         X_train and y_train: Features and target values of the training set
         no_features (int): Number of features
-        learning_rate (float): Learning rate of the gradient descent
+        batch_size (float): Number of inputs that is being used for training and updating the weights
         l2 (float): Regularization constant
         epochs (int): Number of iterations
         val_frac (float): Fraction of the training that will serve the validation of the model
@@ -116,7 +115,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     """
     keras.backend.clear_session()
     # Optimizer
-    opt = keras.optimizers.Adagrad(learning_rate=learning_rate)
+    opt = keras.optimizers.Adamax()
     # Initializer
     ini = keras.initializers.GlorotUniform()
     # Regularizer
@@ -147,7 +146,7 @@ def fit_model(X_train, y_train, no_features, learning_rate, l2, epochs, val_frac
     #tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     #early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
     # Fit
-    history = model.fit(X_train, y_train, batch_size=200, epochs=epochs, validation_split=val_frac, verbose=verbose)
+    history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=val_frac, verbose=verbose)
     return history, model, model.count_params()
 
 def mean_absolute_percentage_error(y_true, y_pred):
