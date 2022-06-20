@@ -24,13 +24,13 @@ X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0
 # Compile and fit the optimum model
 history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         no_features=len(target_index),
-                                        learning_rate=0.1,
+                                        batch_size=100,
                                         l2=1e-10,
-                                        epochs=100000,
+                                        epochs=5000,
                                         val_frac=0.2,
                                         architecture='deep',
-                                        units=24,
-                                        layers=4,
+                                        units=40,
+                                        layers=3,
                                         activation='tanh',
                                         verbose=0 )
 
