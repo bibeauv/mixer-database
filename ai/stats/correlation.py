@@ -72,5 +72,5 @@ index = {0:'TD',
          6:'Re',
          7:'Np'}
 for i in range(8):
-    print("Eigen values of", index[i], eigen_values[i])
-    print("Max of eigen vector is", index[np.argmax(np.abs(eigen_vectors[i]))], "with", eigen_vectors[i])
+    print(f"{i}e valeur propre = ", eigen_values[i])
+    print(f"{i}e vecteur propre = ", eigen_vectors[i])
