@@ -12,7 +12,8 @@ from sklearn.metrics import mean_absolute_error
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
+print('.......... Reading Data ..........')
+data = MNN.read_mixerdata('mixer_database_0-99999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
@@ -24,48 +25,54 @@ X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0
 # Compile and fit the optimum model
 history, model, params = MNN.fit_model( X_train=X_train, y_train=y_train,
                                         no_features=len(target_index),
-                                        batch_size=100,
+                                        batch_size=200,
                                         l2=1e-10,
                                         epochs=5000,
-                                        val_frac=0.2,
+                                        val_frac=0.0,
                                         architecture='deep',
-                                        units=40,
+                                        units=50,
                                         layers=3,
                                         activation='tanh',
-                                        verbose=0 )
+                                        verbose=1 )
 
 # Save the model
 model.save('optimum_mixer_model')
 
 # Calculate the MAPE for the training set
 train_predictions = model.predict(X_train)
-mape = MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_train),
-                                          y_pred=scaler_y.inverse_transform(train_predictions))
+train_mse = mean_squared_error(y_true=scaler_y.inverse_transform(y_train),
+                               y_pred=scaler_y.inverse_transform(train_predictions))
+train_mae = mean_absolute_error(y_true=scaler_y.inverse_transform(y_train), 
+                                y_pred=scaler_y.inverse_transform(train_predictions))
+train_mape = MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_train),
+                                                y_pred=scaler_y.inverse_transform(train_predictions))
 # Calculate the metrics for the testing set
 test_predictions = model.predict(X_test)
-test_mse = mean_squared_error(y_true=y_test, y_pred=test_predictions)
-test_mae = mean_absolute_error(y_true=y_test, y_pred=test_predictions)
+test_mse = mean_squared_error(y_true=scaler_y.inverse_transform(y_test),
+                              y_pred=scaler_y.inverse_transform(test_predictions))
+test_mae = mean_absolute_error(y_true=scaler_y.inverse_transform(y_test), 
+                               y_pred=scaler_y.inverse_transform(test_predictions))
 test_mape = MNN.mean_absolute_percentage_error(y_true=scaler_y.inverse_transform(y_test),
                                                y_pred=scaler_y.inverse_transform(test_predictions))
 
 print("Mean Squared Error:")
-print("     Training set:   {:5.4e}".format(history.history['mse'][-1]))
-print("     Validation set: {:5.4e}".format(history.history['val_mse'][-1]))
+print("     Training set:   {:5.4e}".format(train_mse))
+#print("     Validation set: {:5.4e}".format(history.history['val_mse'][-1]))
 print("     Testing set:    {:5.4e}".format(test_mse))
 print("Mean Absolute Error:")
-print("     Training set:   {:5.6f}".format(history.history['mae'][-1]))
-print("     Validation set: {:5.6f}".format(history.history['val_mae'][-1]))
+print("     Training set:   {:5.6f}".format(train_mae))
+#print("     Validation set: {:5.6f}".format(history.history['val_mae'][-1]))
 print("     Testing set:    {:5.6f}".format(test_mae))
 print("Mean Absolute Percentage Error:")
-print("     Training set:   {:5.4f}".format(mape))
+print("     Training set:   {:5.4f}".format(train_mape))
 print("     Testing set:    {:5.4f}".format(test_mape))
 
 # Check evolution of training
 plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
+#plt.plot(history.history['val_loss'])
 plt.xscale('log')
 plt.yscale('log')
-plt.legend(['Training', 'Validation'])
+#plt.legend(['Training', 'Validation'])
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.show()

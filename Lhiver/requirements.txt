@@ -1,2 +1,0 @@
-cython==0.29.14
-pyslurm>=19.5

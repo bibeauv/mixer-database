@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow import keras
 from sklearn.model_selection import GridSearchCV
+import pandas as pd
 
 # =================================================================================
 # Main program to do a grid search on the hyperparameters
@@ -12,7 +13,8 @@ from sklearn.model_selection import GridSearchCV
 # =================================================================================
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
+print('.......... Reading Data ..........')
+data = MNN.read_mixerdata('mixer_database_0-99999.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
@@ -22,7 +24,7 @@ target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Grid search
-def create_model(neurons=1, layers=1, activation='tanh', optimizer='adam'):
+def create_model(neurons=1, layers=1, activation='tanh', optimizer='adamax'):
     model = Sequential()
     layer = 0
     while layer < layers:
@@ -34,14 +36,12 @@ def create_model(neurons=1, layers=1, activation='tanh', optimizer='adam'):
 
 seed = 7
 np.random.seed(seed)
-model = keras.wrappers.scikit_learn.KerasRegressor(build_fn=create_model, epochs=1000, verbose=0)
-optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
-activation = ['relu','tanh']
-batch_size = [10,50,100,200,500]
-neurons = [4,8,16,24,32,40]
-layers = [2,3,4,5,6]
-param_grid = dict(optimizer=optimizer,
-                  activation=activation,
+model = keras.wrappers.scikit_learn.KerasRegressor(build_fn=create_model, verbose=0)
+epochs = [1000,2000,5000]
+batch_size = [50,100,200]
+neurons = [40,50,60]
+layers = [2,3,4]
+param_grid = dict(epochs=epochs,
                   batch_size=batch_size,
                   neurons=neurons,
                   layers=layers)
@@ -51,6 +51,10 @@ grid_result = grid.fit(X_train, y_train)
 means = grid_result.cv_results_['mean_test_score']
 stds = grid_result.cv_results_['std_test_score']
 params = grid_result.cv_results_['params']
-for mean, stdev, param in zip(means, stds, params):
-    print("%f (%f) with: %r" % (mean, stdev, param))
+for i in range(len(params)):
+    params[i]['mean'] = means[i]
+    params[i]['std'] = stds[i]
+df = pd.DataFrame(params)
+df.to_excel('grid_search.xlsx')
 print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+print('U da best')
