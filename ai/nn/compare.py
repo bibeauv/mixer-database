@@ -55,7 +55,7 @@ def correlation(b, d, H, Red):
 # ------------------------------------------------------------------------------------------
 
 # Read the data
-data = MNN.read_mixerdata('mixer_database_0-19999.txt',19)
+data = MNN.read_mixerdata('mixer_database_0-99999.txt',19)
 data_lethe = MNN.read_mixerdata('mixer_database_0-20.txt',19)
 
 # Clean the data
@@ -106,10 +106,12 @@ Reynolds = Reynolds.tolist()
 
 plt.plot(Reynolds, Np_vec, '-r')
 plt.plot(Reynolds, Np0_vec, '--k')
-plt.scatter(Re_lethe, Np_lethe)
+plt.scatter(Re_lethe, Np_lethe, marker='^', facecolors='none', edgecolors='b')
 plt.legend(['Predictions', 'Correlation', 'Lethe'])
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel('Re')
 plt.ylabel('Np')
+plt.grid(True)
+plt.xlim((0.9,200))
 plt.show()
