@@ -24,7 +24,7 @@ target_index = [0, 1, 2, 3, 5, 6, 7]
 X_train, X_test, y_train, y_test, scaler_X, scaler_y = MNN.initial_setup(data, 0.3, target_index, 8, 42)
 
 # Grid search
-def create_model(neurons=1, layers=1, activation='tanh', optimizer='adamax'):
+def create_model(neurons=1, layers=1, activation='elu', optimizer='adamax'):
     model = Sequential()
     layer = 0
     while layer < layers:

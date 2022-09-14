@@ -27,25 +27,24 @@ from tensorflow import keras
 # mu: Viscosity
 # rho: Density
 
-def correlation(b, d, H, Red):
+def correlation(b, d, H, Red, theta):
     # Constants
     D = 1
     np = 4
-    theta = math.pi/4
 
     # Variables
     eta = 0.711*(0.157 + (np*math.log(D/d))**0.611)/(np**0.52*(1 - (d/D)**2))
     beta = 2*math.log(D/d)/((D/d) - (d/D))
     gamma = (eta*math.log(D/d)/((beta*D/d)**5))**(1/3)
-    X = gamma*np**0.7*b*(math.sin(theta/H))**1.6
+    X = gamma*np**0.7*b*(math.sin(theta)**1.6/H)
 
     Ct = ((1.96*X**1.19)**-7.8 + (0.25)**-7.8)**(-1/7.8)
     Ctr = 23.8*(d/D)**-3.24*(b*math.sin(theta/D))**-1.18*X**-0.74
-    Cl = 0.215*eta*np*(d/H)*(1 - (d/D)**2) + 1.83*(b*math.sin(theta/H))*(np/(2*math.sin(theta)))**(1/3)
+    Cl = 0.215*eta*np*(d/H)*(1 - (d/D)**2) + 1.83*(b*math.sin(theta)/H)*(np/2*math.sin(theta))**(1/3)
     m = ((0.71*X**0.373)**-7.8 + (0.333)**-7.8)**(-1/7.8)
 
     ff = 0.0151*(d/D)*Ct**0.308
-    ReG = (math.pi*eta*math.log(D/d)/(4*d/beta/D))*Red
+    ReG = (math.pi*eta*math.log(D/d)/(4*d/beta*D))*Red
 
     f = Cl/ReG + Ct*(((Ctr/ReG) + ReG)**-1 + (ff/Ct)**(1/m))**m
 
@@ -56,7 +55,8 @@ def correlation(b, d, H, Red):
 
 # Read the data
 data = MNN.read_mixerdata('mixer_database_0-99999.txt',19)
-data_lethe = MNN.read_mixerdata('mixer_database_0-20.txt',19)
+data_lethe = MNN.read_mixerdata('Np-Re3_0-20.txt',19)
+data_lethe2 = MNN.read_mixerdata('Np-Re4_0-20.txt',19)
 
 # Clean the data
 data = MNN.clean_low_Re(data, 0.1, False)
@@ -80,8 +80,8 @@ Np_vec = []
 Np0_vec = []
 for Re in Reynolds:
     # Fixed geometry with Reynolds
-    geo = np.array([[3, 1, 4, 5,
-                     0.1, math.pi/4, 
+    geo = np.array([[2.5, 1.2, 3, 3.5,
+                     0.15, math.pi/6, 
                      Re]])
     # Scale
     X_geo = scaler_X.transform(geo)
@@ -93,13 +93,16 @@ for Re in Reynolds:
     d = geo[0][0]**-1
     H = geo[0][1]**1
     b = d/geo[0][3]
+    theta = geo[0][5]
     Red = Re
-    Np_corr = correlation(b, d, H, Red)
+    Np_corr = correlation(b, d, H, Red, theta)
     Np0_vec.insert(len(Np0_vec), Np_corr)
 
 # Get data from Lethe
 Re_lethe = data_lethe[:,-2]
 Np_lethe = data_lethe[:,-1]
+Re_lethe2 = data_lethe2[:,-2]
+Np_lethe2 = data_lethe2[:,-1]
 
 # Print the curve
 Reynolds = Reynolds.tolist()
@@ -107,6 +110,7 @@ Reynolds = Reynolds.tolist()
 plt.plot(Reynolds, Np_vec, '-r')
 plt.plot(Reynolds, Np0_vec, '--k')
 plt.scatter(Re_lethe, Np_lethe, marker='^', facecolors='none', edgecolors='b')
+plt.scatter(Re_lethe2, Np_lethe2, marker='^', facecolors='none', edgecolors='g')
 plt.legend(['Predictions', 'Correlation', 'Lethe'])
 plt.xscale('log')
 plt.yscale('log')
