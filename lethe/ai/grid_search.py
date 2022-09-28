@@ -43,6 +43,7 @@ param_grid = dict(epochs=epochs,
                   layers=layers)
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=3, scoring='neg_mean_squared_error')
 grid_result = grid.fit(X_train, y_train)
+
 # Summarize results
 means = grid_result.cv_results_['mean_test_score']
 stds = grid_result.cv_results_['std_test_score']
