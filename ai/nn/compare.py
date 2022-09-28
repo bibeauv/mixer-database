@@ -39,7 +39,7 @@ def correlation(b, d, H, Red, theta):
     X = gamma*np**0.7*b*(math.sin(theta)**1.6/H)
 
     Ct = ((1.96*X**1.19)**-7.8 + (0.25)**-7.8)**(-1/7.8)
-    Ctr = 23.8*(d/D)**-3.24*(b*math.sin(theta/D))**-1.18*X**-0.74
+    Ctr = 23.8*(d/D)**-3.24*(b*math.sin(theta)/D)**-1.18*X**-0.74
     Cl = 0.215*eta*np*(d/H)*(1 - (d/D)**2) + 1.83*(b*math.sin(theta)/H)*(np/2*math.sin(theta))**(1/3)
     m = ((0.71*X**0.373)**-7.8 + (0.333)**-7.8)**(-1/7.8)
 
